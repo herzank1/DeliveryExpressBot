@@ -1,0 +1,7 @@
+{
+  "city": "Mexicali, B.C.",
+  "execed_delivery_distance": 10.0,
+  "max_users_transacctions_view": 15,
+  "manual_order_only": false,
+  "request_delivery_location": false
+}
