@@ -4,48 +4,41 @@
  */
 package com.deliveryexpress.quizes;
 
-import com.deliveryexpress.telegram.Messenger.MessageMenu;
-import com.deliveryexpress.telegram.Messenger.TelegramAction;
+import com.deliveryexpress.telegram.Command;
+import com.deliveryexpress.telegram.MessageMenu;
+import com.deliveryexpress.telegram.Response;
 import com.deliveryexpress.telegram.Xupdate;
-import com.deliveryexpress.utils.Utils;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author DeliveryExpress
  */
 public class QuizesControl {
-    
-    static ArrayList<Quiz> quizes = new ArrayList<>();
-    
+
+    static Map<String, Quiz> quizes = new HashMap<>();
+
     public static boolean hasQuiz(String userId) {
-        
-        if (quizes.isEmpty()) {
-            return false;
-        }
 
-        return quizes.stream().filter(c -> c.userId.equals(userId)).findFirst().orElse(null) != null;
+        return quizes.containsKey(userId);
     }
-    
-    public synchronized static void add(Quiz e) {
-        quizes.add(e);
-        
+
+    public static void add(Quiz e) {
+        quizes.put(e.getUserId(), e);
+
     }
-    
+
     public static Quiz getQuiz(String userId) {
-        if (quizes.isEmpty()) {
-            return null;
-        }
-
-        return quizes.stream().filter(c -> c.userId.equals(userId)).findFirst().orElse(null);
+        return quizes.get(userId);
     }
-    
+
     public static void execute(Xupdate xupdate) {
 
         Quiz quiz = getQuiz(xupdate.getSenderId());
-        if (quiz != null) {
-            
-            System.out.println(quiz.toString());
+      
+        if (quiz != null&&!xupdate.getCommand().isCommand()) {
 
             switch (xupdate.getText()) {
 
@@ -56,37 +49,30 @@ public class QuizesControl {
                 case "/esc":
 
                     quiz.destroy();
-                    TelegramAction ta = new TelegramAction();
-                    ta.setSendMessage(xupdate.getSenderId(), "Proceso finalizado!");
-                    ta.execute();
+                    Response.sendMessage(xupdate.getSenderTelegramUser(), "Proceso finalizado!", null);
 
                     break;
-                    
+
                 default:
-                quiz.execute(xupdate);
-                break;
-                        
+                    quiz.execute(xupdate);
+                    break;
 
             }
 
-            
-        }else{
-            System.out.println("quiz not found for:"+xupdate.getSenderId());
-        
+        } else {
+            System.out.println("No se encontro questionario o estas usando un //comando en un questionario!");
+
         }
 
     }
 
     static void destroy(Quiz aThis) {
-        quizes.remove(aThis);
+        quizes.remove(aThis.getUserId());
 
     }
 
     public static void sendAlreadyInProcessMsg(String senderId) {
-        TelegramAction ta = new TelegramAction();
-        ta.setText("Ya tiene un proceso abierto, continue o ingrese /salir");
-        ta.setMenu(new MessageMenu().addExitButton());
-        ta.execute();
+        Response.sendMessage(senderId, "Ya tiene un proceso abierto, continue o ingrese /salir", null);
 
     }
 

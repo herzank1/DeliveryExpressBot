@@ -4,10 +4,13 @@
  */
 package com.deliveryexpress.objects;
 
+import lombok.Data;
+
 /**
  *
  * @author DeliveryExpress
  */
+@Data
 public class Tags {
 
     String data;

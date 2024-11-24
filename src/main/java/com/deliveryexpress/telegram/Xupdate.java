@@ -4,14 +4,11 @@
  */
 package com.deliveryexpress.telegram;
 
-import com.deliveryexpress.de.DataBase;
-import com.deliveryexpress.objects.Location;
-import com.deliveryexpress.objects.TelegramUser;
-import com.deliveryexpress.objects.TelegramUser.Group;
-
-import com.deliveryexpress.quizes.QuizesControl;
-import com.deliveryexpress.utils.Utils;
+import com.deliveryexpress.de.database.DataBase;
+import com.deliveryexpress.objects.Position;
+import com.deliveryexpress.objects.users.TelegramUser;
 import java.util.List;
+import lombok.Data;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
@@ -19,34 +16,23 @@ import org.telegram.telegrambots.meta.api.objects.User;
  *
  * @author DeliveryExpress
  */
+@Data
 public class Xupdate {
 
     Update update;
     String botUserName;
-    
-    
 
-    Xupdate(Update update,String botUserName) {
+    /***
+     * 
+     * @param update
+     * @param botUserName incoming bot
+     */
+    Xupdate(Update update, String botUserName) {
         this.update = update;
         this.botUserName = botUserName;
-        
-        /*
-        String senderId = "";
-        
-           if (this.update.hasCallbackQuery()) {
-            senderId = update.getCallbackQuery().getFrom().getId().toString();
-
-        } else if (this.update.hasMessage()) {
-            senderId = update.getMessage().getFrom().getId().toString();
-
-        } else if (this.update.hasEditedMessage()) {
-            senderId = update.getEditedMessage().getFrom().getId().toString();
-        }
-        */
-        
 
     }
-    
+
     public boolean isGroupMessage() {
 
         if (this.update.hasCallbackQuery()) {
@@ -76,11 +62,9 @@ public class Xupdate {
         return false;
 
     }
-    
-   
-        
+
     /**
-     * 
+     *
      * @return suer or group ids
      */
     public String getFromId() {
@@ -104,9 +88,10 @@ public class Xupdate {
 
         return "";
     }
-    
-    /***
-     * 
+
+    /**
+     * *
+     *
      * @return sender or user Id the origin
      */
     public String getSenderId() {
@@ -124,7 +109,7 @@ public class Xupdate {
         return "null";
 
     }
-    
+
     public String getText() {
 
         if (this.update.hasCallbackQuery()) {
@@ -134,54 +119,72 @@ public class Xupdate {
         } else if (this.update.hasEditedMessage() && this.update.getEditedMessage().hasText()) {
             return this.update.getEditedMessage().getText();
         }
-        
+
         return "null";
 
     }
-    
-    
+
     public Command getCommand() {
         return new Command(getText());
     }
-    
+
     public boolean hasLocation() {
         return getLocation() != null;
+    }
+
+    /**
+     * *
+     *
+     * @return works for private and groups chats
+     */
+    public Position getLocation() {
+
+        if (this.update.hasMessage() && this.update.getMessage().hasLocation()) {
+            return new Position(this.update.getMessage().getLocation().getLatitude(),
+                    this.update.getMessage().getLocation().getLongitude());
+
+        } else if (this.update.hasEditedMessage() && this.update.getEditedMessage().hasLocation()) {
+            return new Position(this.update.getMessage().getLocation().getLatitude(),
+                    this.update.getMessage().getLocation().getLongitude());
+        }
+
+        return null;
+
     }
     
     /***
      * 
-     * @return works for private and groups chats
+     * @return explicitamente el usuario que envio este mensaje 
      */
-    public Location getLocation(){
-        
-      
-        
-        if (this.update.hasMessage()&&this.update.getMessage().hasLocation()) {
-            return new Location(this.update.getMessage().getLocation()) ;
+    public TelegramUser getSenderTelegramUser() {
+   
+        return DataBase.Accounts.getTelegramUser(this.getSenderId(), this.getBotUserName());
 
-        } else if (this.update.hasEditedMessage()&&this.update.getEditedMessage().hasLocation()) {
-            return new Location(this.update.getEditedMessage().getLocation());
+    }
+
+  /***
+   * 
+   * @return el grupo o el usuario de este update
+   */
+    public TelegramUser getTelegramUser() {
+        TelegramUser read = null;
+
+        if (this.isGroupMessage()) {
+            read = DataBase.Accounts.TelegramUsers().read(this.getFromId());
+            
+        } else {
+            
+            read = getSenderTelegramUser();
         }
 
-        return null;
-    
+  
+        return read;
     }
 
-    public TelegramUser getTelegramUser() {
-            return DataBase.TelegramUsers.getTelegramUser(this);
-    }
-    
-    public TelegramUser getCallerTelegramUser() {
-        return DataBase.TelegramUsers.getTelegramUserById(this.getSenderId());
-    }
-
-    public boolean hasQuiz() {
-    return QuizesControl.hasQuiz(getSenderId());
-    }
-
-    
-       /***
-     * 
+  
+    /**
+     * *
+     *
      * @return works for private and groups chats
      */
     public String getMessageId() {
@@ -200,78 +203,39 @@ public class Xupdate {
 
     }
 
-   
-    public String getBotName() {
-        return this.botUserName;
+    public boolean hasNewChatMember() {
+
+        List<User> newChatMembers = this.update.getMessage().getNewChatMembers();
+        return newChatMembers != null || !newChatMembers.isEmpty();
+
+    }
+
+    public List<User> getNewChatMembers() {
+
+        return this.update.getMessage().getNewChatMembers();
 
     }
 
     public boolean isExpired() {
-       
-    return false;
-    }
 
-    public boolean hasNewChatMember() {
-      
-        List<User> newChatMembers = this.update.getMessage().getNewChatMembers();
-        return newChatMembers!=null||!newChatMembers.isEmpty();
-    
-    }
-    
-    public List<User> getNewChatMembers(){
+        Integer date = 0;
 
-       return this.update.getMessage().getNewChatMembers();
+        if (this.update.hasCallbackQuery()) {
+            date = this.update.getCallbackQuery().getMessage().getDate();
 
-    }
+        } else if (this.update.hasMessage()) {
+            date = this.update.getMessage().getDate();
+        } else if (this.update.hasEditedMessage()) {
 
-
-
-    
-    
-    public static class Command{
-    
-        
-        String data;
-        String[] parts;
-        
-        public static final String COMMAND_SEPARATOR = "&";
-
-        public Command(String data) {
-            this.data = data;
-            if (data.startsWith("/")) {
-                this.parts = data.split(COMMAND_SEPARATOR);
-            }
+            date = this.update.getEditedMessage().getDate();
 
         }
 
-        public String getParam(int index) {
+        // Obtener el tiempo actual en segundos
+        long currentTimestamp = System.currentTimeMillis() / 1000;
 
-            try {
-
-                return parts[index];
-
-            } catch (Exception e) {
-                return "";
-            }
-
-        }
-
-        public String command() {
-
-            if (getParam(0).isEmpty()) {
-                return this.data;
-            } else {
-                return getParam(0);
-            }
-
-        }
-
-        
-        
-        
-    
+        // Comprobar si han pasado más de 10 minutos (600 segundos)
+        return (currentTimestamp - date) > 600;
     }
 
-    
-    
 }

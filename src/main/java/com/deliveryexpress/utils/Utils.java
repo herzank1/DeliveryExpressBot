@@ -4,12 +4,9 @@
  */
 package com.deliveryexpress.utils;
 
-import com.deliveryexpress.de.DataBase;
 import com.deliveryexpress.de.Global;
 import com.deliveryexpress.de.Main;
-import com.deliveryexpress.objects.Location;
-import com.deliveryexpress.objects.TelegramUser;
-import static com.deliveryexpress.utils.Utils.DateUtils.getUnixTimeStamp;
+import com.deliveryexpress.objects.users.Bussines;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -880,7 +877,7 @@ public class Utils {
             
             
 
-            public float getDeliveryCost(TelegramUser.Bussines bussines) {
+            public float getDeliveryCost(Bussines bussines) {
 
                 int kmBase = bussines.getKmBase();
                 float kmBaseCost = bussines.getKmBaseCost();
@@ -927,46 +924,7 @@ public class Utils {
 
         }
         
-        public static void test() {
-            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-            System.out.println("Google Maps route stimation tester");
-            String cityContext = "Mexicali, B.C.";
-            
-            
-            String coor1 = "32.62248371786898, -115.50725925186667"; //galerias
-            String coor2 = "32.61300020970167, -115.38643878221053"; //plaza nuevo mexicali
-            System.out.println(coor1+" -> "+new Location(coor1).getAddress());
-            System.out.println(coor2+" -> "+new Location(coor2).getAddress());
-            
-            while (!myObj.nextLine().equals("/salir")) {
-
-                System.out.println("Ingrese la ciudad en contexto");
-
-                String city = myObj.nextLine();
-                
-
-                System.out.println("Ingrese una direccion de Origen...");
-
-                String origin = myObj.nextLine();
-
-                System.out.println("Ingrese una direccion de Entrega...");
-
-                String dest = myObj.nextLine();
-
-                Route route = new Route(origin, dest,city);
-                System.out.println(Utils.toJsonString(route));
-
-                System.out.println("Navigate Url: " + route.getNavigationUrl());
-                System.out.println("Origin Mark Url: " + route.getFromPositionMarkUrl());
-                System.out.println("Dest Mark Url: " + route.getToPositionMarkUrl());
-                System.out.println("Para termina escribe /salir");
-                
-
-            }
        
-        
-        
-        }
 
     }
 

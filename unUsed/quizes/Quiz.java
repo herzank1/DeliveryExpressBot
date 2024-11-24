@@ -48,6 +48,18 @@ public abstract class Quiz {
     QuizesControl.destroy(this);
     }
     
-  
+     MessageMenu getAreas() {
+        MessageMenu menu = new MessageMenu();
+        List<GroupArea> readAll = DataBase.Accounts.GroupAreas.GroupAreas().readAll();
+        menu.addButton(new MessageMenu.Button("GENERAL", "GENERAL"), true);
+        for (GroupArea o : readAll) {
+            menu.addButton(new MessageMenu.Button(o.getName(), o.getId()), true);
+        }
+        
+        return menu;
+        
+    }
+    
+    
 
 }

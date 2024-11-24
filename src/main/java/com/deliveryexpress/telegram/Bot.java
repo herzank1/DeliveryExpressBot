@@ -4,15 +4,15 @@
  */
 package com.deliveryexpress.telegram;
 
-import com.deliveryexpress.de.DataBase;
 import com.deliveryexpress.de.SystemSecurity;
-import com.deliveryexpress.de.UserInteracionHandlers;
 import com.deliveryexpress.objects.Tags;
-import com.deliveryexpress.objects.TelegramUser;
 import com.deliveryexpress.utils.Utils;
-import java.io.Serializable;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.j256.ormlite.field.DatabaseField;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Data;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -24,11 +24,23 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
  *
  * @author DeliveryExpress
  */
+@Data
 public class Bot extends TelegramLongPollingBot {
 
-    String userName, apiKey,status,tags;
-    public static int MAX_MSG_PER_SECOND = 30; //telegram Api allow 30 msg per seconds
-    public static int MAX_MSG_PER_SECOND_TO_SAME_GROUP = 20;//telegram Api allow 20 msg per minute / one msg each 3 seconds
+    @DatabaseField(id = true)
+    String userName;
+    @DatabaseField
+    String apiKey;
+    @DatabaseField
+    String status;
+    @DatabaseField
+    String tags;
+
+    public int MAX_MSG_PER_SECOND = 30; //telegram Api allow 30 msg per seconds
+    public int MAX_MSG_PER_SECOND_TO_SAME_GROUP = 20;//telegram Api allow 20 msg per minute / one msg each 3 seconds
+
+    public Bot() {
+    }
 
     public Bot(String userName, String apiKey) {
         this.userName = userName;
@@ -42,77 +54,49 @@ public class Bot extends TelegramLongPollingBot {
         this.status = status;
         this.tags = tags;
     }
-    
 
     public boolean init() {
         TelegramBotsApi telegramBotsApi;
         try {
             telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
             BotSession registerBot = telegramBotsApi.registerBot(this);
-            System.out.println(this.userName+" running:"+registerBot.isRunning());
+            System.out.println(this.userName + " running:" + registerBot.isRunning());
             return true;
         } catch (TelegramApiException ex) {
             Logger.getLogger(Bot.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return false;
 
     }
-    
-
 
     @Override
     public void onUpdateReceived(Update update) {
         
-       
+        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(update));
+
         Xupdate xupdate = new Xupdate(update, this.getBotUsername());
         
-        System.out.println("[UPDATE]\n"+Utils.toJsonString(update));
-        System.out.println("[TELEGRAM_USER]\n"+Utils.toJsonString(xupdate.getTelegramUser()));
+        
 
-        
         if (SystemSecurity.allowUpdate(xupdate)) {
-            //System.out.println("User:"+xupdate.getSenderId());
-            UserInteracionHandlers.execute(xupdate);
-        }else{
-        
-       // System.out.println("Blocked user:"+xupdate.getSenderId());
+            CommandsHandlers.execute(xupdate);
         }
 
+    }
+
+    public Tags getTags() {
+        return new Tags(this.tags);
     }
 
     @Override
     public String getBotUsername() {
-        return this.userName;
+        return userName; // Devuelve el username del bot
     }
 
     @Override
     public String getBotToken() {
-        return this.apiKey;
-    }
-    
-    public Tags getTags() {
-            return new Tags(this.tags);
-        }
-
-    public String getStatus() {
-        return status;
+        return apiKey; // Devuelve el token del bot
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
-    public boolean isTestBot(){
-    return getTags().contains(Tags.BotTags.IS_TEST_BOT);
-    }
-
-    
-    public static interface BotStatus{
-    
-        String ACTIVE = "ACTIVE";
-        String INACTIVE = "INACTIVE";
-    
-    }
-    
 }
