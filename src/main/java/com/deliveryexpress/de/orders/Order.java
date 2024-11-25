@@ -9,6 +9,7 @@ import com.deliveryexpress.objects.users.Bussines;
 import com.deliveryexpress.objects.users.Customer;
 import com.deliveryexpress.objects.users.DeliveryMan;
 import java.util.ArrayList;
+import java.util.UUID;
 import lombok.Data;
 
 /**
@@ -38,6 +39,13 @@ public class Order {
 
     ArrayList<String> logs = new ArrayList<>();
 
+    public Order(Bussines bussines, boolean b) {
+        this.id=UUID.randomUUID().toString();
+        this.busssines = bussines;
+        this.status=OrderStatus.PREPARACION;
+      
+    }
+
     public Float getTotal() {
         return this.getOrderCost() + this.getDeliveryCost();
     }
@@ -50,5 +58,7 @@ public class Order {
     public GroupArea getArea() {
         return this.getBusssines().getGrouArea();
     }
+
+
 
 }

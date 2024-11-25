@@ -19,6 +19,8 @@ import lombok.Data;
  */
 @Data
 public class Bussines {
+    
+    String telegramId;
 
     @DatabaseField(id = true)
     String accountId;

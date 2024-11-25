@@ -62,15 +62,21 @@ public class TelegramUser {
     }
 
     public DeliveryMan getDeliveryMan() {
-        return DataBase.Accounts.Deliveries.Deliveries().read(accountId);
+        DeliveryMan read = DataBase.Accounts.Deliveries.Deliveries().read(accountId);
+        read.setTelegramId(id);
+        return read;
     }
 
     public Bussines getBussines() {
-        return DataBase.Accounts.Bussiness.Bussiness().read(accountId);
+        Bussines read = DataBase.Accounts.Bussiness.Bussiness().read(accountId);
+        read.setTelegramId(id);
+        return read;
     }
 
     public Moderator getModerator() {
-        return DataBase.Accounts.Moderators.Moderators().read(accountId);
+        Moderator read = DataBase.Accounts.Moderators.Moderators().read(accountId);
+        read.setTelegramId(id);
+        return read;
     }
 
 }

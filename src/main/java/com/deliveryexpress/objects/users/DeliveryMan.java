@@ -18,6 +18,8 @@ import lombok.Data;
 public class DeliveryMan {
 
     private static final long LAST_UPDATE_TOLERANCE = 60;
+    
+    String telegramId;
 
     @DatabaseField(id = true)
     String accountId;

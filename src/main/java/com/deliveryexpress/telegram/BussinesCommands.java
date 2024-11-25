@@ -10,6 +10,9 @@ import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.Bussines;
 import com.deliveryexpress.objects.users.DeliveryMan;
 import com.deliveryexpress.objects.users.TelegramUser;
+import com.deliveryexpress.quizes.QuizNewOrderAtm;
+import com.deliveryexpress.quizes.QuizNewOrderManual;
+import com.deliveryexpress.quizes.QuizesControl;
 
 /**
  *
@@ -48,11 +51,21 @@ class BussinesCommands {
 
                 break;
 
+            case "/new_order_atm":
+                QuizesControl.add(new QuizNewOrderAtm(xupdate.getSenderId(), bussines, false));
+                QuizesControl.execute(xupdate);
+
+                break;
+
+            case "/new_order_manual":
+                QuizesControl.add(new QuizNewOrderManual(xupdate.getSenderId(), bussines, false));
+                QuizesControl.execute(xupdate);
+
+                break;
             case "/delete_msg":
                 Response.deleteMessage(xupdate);
 
                 break;
-
         }
 
     }
@@ -60,9 +73,8 @@ class BussinesCommands {
     private static MessageMenu getMenu() {
         MessageMenu menu = new MessageMenu();
 
-        menu.addButton("✳ Nueva Orden(ATM)", "/neworder&1", true);
-
-        menu.addButton("✴️ Nueva Orden(Manual)", "/neworder&2", true);
+        menu.addButton("✳ Nueva Orden(ATM)", "/new_order_atm", true);
+        menu.addButton("✴️ Nueva Orden(Manual)", "/new_order_manual&2", true);
         menu.addButton("🛵 Cotizar envio(ATM)", "/calcdeliverycost", true);
         menu.addButton("🛵 Tabla KM", "/deliverytable", true);
         menu.addButton("📑 Mis ordenes", "/myorders", true);

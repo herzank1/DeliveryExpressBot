@@ -5,6 +5,7 @@
 package com.deliveryexpress.objects.users;
 
 import com.j256.ormlite.field.DatabaseField;
+import java.util.UUID;
 import lombok.Data;
 
 /**
@@ -14,6 +15,8 @@ import lombok.Data;
 
 @Data
 public class Moderator {
+    
+    String telegramId;
 
     @DatabaseField(id = true)
     String accountId;
@@ -34,6 +37,7 @@ public class Moderator {
     }
 
     public Moderator(String name, String phone) {
+        this.accountId = UUID.randomUUID().toString();
         this.name = name;
         this.phone = phone;
     }
