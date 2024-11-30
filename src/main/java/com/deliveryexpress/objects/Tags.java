@@ -5,12 +5,14 @@
 package com.deliveryexpress.objects;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author DeliveryExpress
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Tags {
 
     String data;

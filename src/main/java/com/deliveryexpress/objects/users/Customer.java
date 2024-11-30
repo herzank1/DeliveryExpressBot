@@ -8,12 +8,14 @@ import com.j256.ormlite.field.DatabaseField;
 import com.monge.tbotboot.objects.Position;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author DeliveryExpress
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Customer extends BaseDao {
 
     @DatabaseField(id = true)

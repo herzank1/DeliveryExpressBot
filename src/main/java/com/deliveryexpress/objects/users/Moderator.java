@@ -8,6 +8,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.UUID;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
@@ -15,6 +16,7 @@ import lombok.Data;
  */
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Moderator extends BaseDao {
     
     String telegramId;

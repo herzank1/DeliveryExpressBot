@@ -11,6 +11,7 @@ import com.deliveryexpress.objects.GroupArea;
 import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.Bussines;
 import com.deliveryexpress.objects.users.Customer;
+import com.deliveryexpress.objects.users.DBot;
 import com.deliveryexpress.objects.users.DeliveryMan;
 import com.deliveryexpress.objects.users.Moderator;
 import com.deliveryexpress.objects.users.Tuser;
@@ -30,6 +31,8 @@ import java.util.logging.Logger;
 public class DataBase {
 
     public static void init() {
+        
+        System.out.println("Init DataBase...");
 
         ConnectionPoolManager.addConnection("db_accounts.sqlite",
                 Tuser.class,
@@ -38,7 +41,7 @@ public class DataBase {
                 Customer.class,
                 DeliveryMan.class,
                 GroupArea.class,
-                Bot.class
+                DBot.class
         );
 
         ConnectionPoolManager.addConnection("db_contability.sqlite",
@@ -50,6 +53,7 @@ public class DataBase {
                 StorableOrder.class
         );
         
+           System.out.println("success!");
 
      
 

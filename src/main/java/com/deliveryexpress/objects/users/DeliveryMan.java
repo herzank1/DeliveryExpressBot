@@ -11,12 +11,14 @@ import com.monge.tbotboot.objects.Position;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.UUID;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author DeliveryExpress
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class DeliveryMan extends BaseDao {
 
     private static final long LAST_UPDATE_TOLERANCE = 60;

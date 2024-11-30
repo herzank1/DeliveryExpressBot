@@ -6,14 +6,17 @@ package com.deliveryexpress.objects.users;
 
 import com.monge.tbotboot.messenger.Xupdate;
 import com.j256.ormlite.field.DatabaseField;
+import com.monge.tbotboot.objects.Receptor;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author DeliveryExpress
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Tuser extends BaseDao {
 
     @DatabaseField(id = true)
@@ -61,21 +64,25 @@ public class Tuser extends BaseDao {
     }
 
     public DeliveryMan getDeliveryMan() {
-        DeliveryMan read = DeliveryMan.read(DeliveryMan.class,accountId);
+        DeliveryMan read = DeliveryMan.read(DeliveryMan.class, accountId);
         read.setTelegramId(id);
         return read;
     }
 
     public Bussines getBussines() {
-        Bussines read = Bussines.read(Bussines.class,this.accountId);
+        Bussines read = Bussines.read(Bussines.class, this.accountId);
         read.setTelegramId(id);
         return read;
     }
 
     public Moderator getModerator() {
-        Moderator read = Moderator.read(Moderator.class,this.accountId);
+        Moderator read = Moderator.read(Moderator.class, this.accountId);
         read.setTelegramId(id);
         return read;
+    }
+
+    public Receptor getReceptor() {
+        return new Receptor(this.id, this.lastNodeBot);
     }
 
 }

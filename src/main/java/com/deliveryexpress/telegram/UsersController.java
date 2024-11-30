@@ -6,6 +6,8 @@ package com.deliveryexpress.telegram;
 
 import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.Tuser;
+import com.google.gson.GsonBuilder;
+import com.monge.tbotboot.commands.CommandsHandlers;
 import com.monge.tbotboot.messenger.Response;
 import com.monge.tbotboot.messenger.Xupdate;
 import com.monge.tbotboot.quizes.QuizesControl;
@@ -14,9 +16,12 @@ import com.monge.tbotboot.quizes.QuizesControl;
  *
  * @author DeliveryExpress
  */
-class CommandsHandlers {
+public class UsersController implements CommandsHandlers{
 
-    static void execute(Xupdate xupdate) {
+     @Override
+     public void execute(Xupdate xupdate) {
+         
+         System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(xupdate));
 
         if (xupdate.isGroupMessage()) {
             Response.sendMessage(xupdate.getTelegramUser(), xupdate.getText(), null);

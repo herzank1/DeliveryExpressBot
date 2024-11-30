@@ -12,12 +12,14 @@ import com.monge.xsqlite.xsqlite.BaseDao;
 import static com.monge.xsqlite.xsqlite.BaseDao.read;
 import java.util.UUID;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author DeliveryExpress
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Bussines extends BaseDao {
     
     String telegramId;

@@ -8,8 +8,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.UUID;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class BalanceAccount extends BaseDao {
 
      @DatabaseField(id = true)

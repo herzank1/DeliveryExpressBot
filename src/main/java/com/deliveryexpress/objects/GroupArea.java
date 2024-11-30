@@ -7,12 +7,14 @@ package com.deliveryexpress.objects;
 import com.j256.ormlite.field.DatabaseField;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  *
  * @author DeliveryExpress representa un area de operaciones
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class GroupArea extends BaseDao {
 
     @DatabaseField(id = true)
