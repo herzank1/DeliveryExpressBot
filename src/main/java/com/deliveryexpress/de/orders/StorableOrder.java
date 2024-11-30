@@ -4,10 +4,12 @@
  */
 package com.deliveryexpress.de.orders;
 
+import com.monge.xsqlite.xsqlite.BaseDao;
+
 /**
  *
  * @author DeliveryExpress
  */
-public class StorableOrder {
+public class StorableOrder extends BaseDao {
     
 }

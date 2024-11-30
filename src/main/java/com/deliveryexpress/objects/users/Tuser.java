@@ -4,10 +4,9 @@
  */
 package com.deliveryexpress.objects.users;
 
-import com.deliveryexpress.de.database.DataBase;
-import com.deliveryexpress.de.database.DbBalancer;
-import com.deliveryexpress.telegram.Xupdate;
+import com.monge.tbotboot.messenger.Xupdate;
 import com.j256.ormlite.field.DatabaseField;
+import com.monge.xsqlite.xsqlite.BaseDao;
 import lombok.Data;
 
 /**
@@ -15,7 +14,7 @@ import lombok.Data;
  * @author DeliveryExpress
  */
 @Data
-public class TelegramUser {
+public class Tuser extends BaseDao {
 
     @DatabaseField(id = true)
     String id;
@@ -28,7 +27,7 @@ public class TelegramUser {
     @DatabaseField
     String accountId;
 
-    public TelegramUser() {
+    public Tuser() {
     }
 
     /**
@@ -40,7 +39,7 @@ public class TelegramUser {
      * @param accountType
      * @param accountId
      */
-    public TelegramUser(String id, String lastNodeBot, boolean blackList, String accountType, String accountId) {
+    public Tuser(String id, String lastNodeBot, boolean blackList, String accountType, String accountId) {
         this.id = id;
         this.lastNodeBot = lastNodeBot;
         this.blackList = blackList;
@@ -48,7 +47,7 @@ public class TelegramUser {
         this.accountId = accountId;
     }
 
-    public TelegramUser(Xupdate aThis) {
+    public Tuser(Xupdate aThis) {
         if (aThis.isGroupMessage()) {
             this.id = aThis.getFromId();
             this.accountType = AccountType.IS_GROUP;
@@ -62,19 +61,19 @@ public class TelegramUser {
     }
 
     public DeliveryMan getDeliveryMan() {
-        DeliveryMan read = DataBase.Accounts.Deliveries.Deliveries().read(accountId);
+        DeliveryMan read = DeliveryMan.read(DeliveryMan.class,accountId);
         read.setTelegramId(id);
         return read;
     }
 
     public Bussines getBussines() {
-        Bussines read = DataBase.Accounts.Bussiness.Bussiness().read(accountId);
+        Bussines read = Bussines.read(Bussines.class,this.accountId);
         read.setTelegramId(id);
         return read;
     }
 
     public Moderator getModerator() {
-        Moderator read = DataBase.Accounts.Moderators.Moderators().read(accountId);
+        Moderator read = Moderator.read(Moderator.class,this.accountId);
         read.setTelegramId(id);
         return read;
     }

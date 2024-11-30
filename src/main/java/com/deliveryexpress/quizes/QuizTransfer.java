@@ -7,11 +7,12 @@ package com.deliveryexpress.quizes;
 
 import com.deliveryexpress.de.contability.Transacction;
 import com.deliveryexpress.de.database.DataBase;
-import com.deliveryexpress.de.database.DbBalancer;
-import com.deliveryexpress.telegram.MessageMenu;
-import com.deliveryexpress.telegram.Response;
-import com.deliveryexpress.telegram.Xupdate;
+import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.utils.Utils;
+import com.monge.tbotboot.messenger.MessageMenu;
+import com.monge.tbotboot.messenger.Response;
+import com.monge.tbotboot.messenger.Xupdate;
+import com.monge.tbotboot.quizes.Quiz;
 
 /**
  *
@@ -28,11 +29,11 @@ public class QuizTransfer extends Quiz{
     }
 
     @Override
-    void execute(Xupdate xupdate) {
+    public void execute(Xupdate xupdate) {
         
-           Response response = new Response(xupdate.getSenderTelegramUser());
+           Response response = new Response(xupdate.getTelegramUser());
         
-        switch (super.step) {
+        switch (super.getStep()) {
             
             case -1:
                 response.setText("Ingrese la cuenta de origen.");

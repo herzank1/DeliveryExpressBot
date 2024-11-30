@@ -4,12 +4,12 @@
  */
 package com.deliveryexpress.objects.users;
 
-import com.deliveryexpress.de.database.DataBase;
-import com.deliveryexpress.de.database.DbBalancer;
 import com.deliveryexpress.objects.GroupArea;
-import com.deliveryexpress.objects.Position;
-import com.deliveryexpress.telegram.MessageMenu;
 import com.j256.ormlite.field.DatabaseField;
+import com.monge.tbotboot.messenger.MessageMenu;
+import com.monge.tbotboot.objects.Position;
+import com.monge.xsqlite.xsqlite.BaseDao;
+import static com.monge.xsqlite.xsqlite.BaseDao.read;
 import java.util.UUID;
 import lombok.Data;
 
@@ -18,7 +18,7 @@ import lombok.Data;
  * @author DeliveryExpress
  */
 @Data
-public class Bussines {
+public class Bussines extends BaseDao {
     
     String telegramId;
 
@@ -71,7 +71,7 @@ public class Bussines {
     }
 
     public GroupArea getGrouArea() {
-        GroupArea read = DataBase.Accounts.GroupAreas.GroupAreas().read(this.areaId);
+        GroupArea read = GroupArea.read(this.getClass(), this.areaId);
         return read;
 
     }

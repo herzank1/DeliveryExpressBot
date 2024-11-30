@@ -10,14 +10,14 @@ import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.DeliveryMan;
 import com.deliveryexpress.objects.users.Moderator;
-import com.deliveryexpress.objects.users.TelegramUser;
+import com.deliveryexpress.objects.users.Tuser;
 
-import com.deliveryexpress.telegram.MessageMenu;
-import com.deliveryexpress.telegram.Response;
-
-import com.deliveryexpress.telegram.Xupdate;
 import com.deliveryexpress.utils.Utils;
 import com.google.gson.GsonBuilder;
+import com.monge.tbotboot.messenger.MessageMenu;
+import com.monge.tbotboot.messenger.Response;
+import com.monge.tbotboot.messenger.Xupdate;
+import com.monge.tbotboot.quizes.Quiz;
 
 /**
  *
@@ -34,11 +34,11 @@ public class QuizNewModerator extends Quiz {
     }
 
     @Override
-    void execute(Xupdate xupdate) {
+    public void execute(Xupdate xupdate) {
 
-        Response response = new Response(xupdate.getSenderTelegramUser());
+        Response response = new Response(xupdate.getTelegramUser());
 
-        switch (super.step) {
+        switch (super.getStep()) {
 
             case 0:
 
@@ -74,7 +74,7 @@ public class QuizNewModerator extends Quiz {
                 if (Utils.isPositiveAnswer(xupdate.getText())) {
                   
                     try {
-                        TelegramUser tu = xupdate.getSenderTelegramUser();
+                        Tuser tu = new Tuser(xupdate);
 
                         tu.setAccountType(AccountType.DELIVERYMAN);
                         tu.setAccountId(moderator.getAccountId());

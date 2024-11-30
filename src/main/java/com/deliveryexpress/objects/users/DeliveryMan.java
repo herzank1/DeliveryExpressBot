@@ -4,9 +4,11 @@
  */
 package com.deliveryexpress.objects.users;
 
-import com.deliveryexpress.objects.Position;
+
 import com.deliveryexpress.utils.Utils;
 import com.j256.ormlite.field.DatabaseField;
+import com.monge.tbotboot.objects.Position;
+import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.UUID;
 import lombok.Data;
 
@@ -15,7 +17,7 @@ import lombok.Data;
  * @author DeliveryExpress
  */
 @Data
-public class DeliveryMan {
+public class DeliveryMan extends BaseDao {
 
     private static final long LAST_UPDATE_TOLERANCE = 60;
     

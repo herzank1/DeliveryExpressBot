@@ -5,11 +5,12 @@
 package com.deliveryexpress.de.contability;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class BalanceAccount {
+public class BalanceAccount extends BaseDao {
 
      @DatabaseField(id = true)
     String accountNumber;

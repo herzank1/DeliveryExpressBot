@@ -32,11 +32,7 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
         </dependency>
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.44.1.0</version>
-        </dependency>
+      
           
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -45,20 +41,22 @@
             <scope>provided</scope>
         </dependency>
         
-            <!-- ORMLite Core -->
-        <dependency>
-            <groupId>com.j256.ormlite</groupId>
-            <artifactId>ormlite-core</artifactId>
-            <version>6.1</version>
+         <dependency>    
+            <groupId>com.monge.xsqlite</groupId>
+            <artifactId>XSQLite</artifactId>
+            <version>1</version>
         </dependency>
-
-        <!-- ORMLite JDBC -->
-        <dependency>
-            <groupId>com.j256.ormlite</groupId>
-            <artifactId>ormlite-jdbc</artifactId>
-            <version>6.1</version>
+        
+                 <dependency>
+            <groupId>com.monge.tbotboot</groupId>
+            <artifactId>TelegramBotFramework</artifactId>
+            <version>1</version>
         </dependency>
+        
+        
     </dependencies>
+        
+
     
      <build>
         <plugins>

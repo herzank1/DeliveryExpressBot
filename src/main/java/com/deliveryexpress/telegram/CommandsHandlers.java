@@ -5,7 +5,10 @@
 package com.deliveryexpress.telegram;
 
 import com.deliveryexpress.objects.users.AccountType;
-import com.deliveryexpress.quizes.QuizesControl;
+import com.deliveryexpress.objects.users.Tuser;
+import com.monge.tbotboot.messenger.Response;
+import com.monge.tbotboot.messenger.Xupdate;
+import com.monge.tbotboot.quizes.QuizesControl;
 
 /**
  *
@@ -23,8 +26,9 @@ class CommandsHandlers {
                 QuizesControl.execute(xupdate);
             }
             
+            Tuser user = Tuser.read(Tuser.class, xupdate.getSenderId());
 
-            switch (xupdate.getSenderTelegramUser().getAccountType()) {
+            switch (user.getAccountType()) {
 
                 case AccountType.NOT_REGISTRED:
                     

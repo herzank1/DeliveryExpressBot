@@ -5,19 +5,17 @@
 package com.deliveryexpress.quizes;
 
 import com.deliveryexpress.de.contability.BalanceAccount;
-import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.Bussines;
-import com.deliveryexpress.objects.users.TelegramUser;
+import com.deliveryexpress.objects.users.Tuser;
 
-import com.deliveryexpress.telegram.MessageMenu;
-import com.deliveryexpress.telegram.Methods;
-import com.deliveryexpress.telegram.Response;
 
-import com.deliveryexpress.telegram.Xupdate;
 import com.deliveryexpress.utils.Utils;
-import java.util.ArrayList;
+import com.monge.tbotboot.messenger.MessageMenu;
+import com.monge.tbotboot.messenger.Response;
+import com.monge.tbotboot.messenger.Xupdate;
+import com.monge.tbotboot.quizes.Quiz;
 
 /**
  *
@@ -34,11 +32,11 @@ public class QuizNewBussines extends Quiz {
     }
 
     @Override
-    void execute(Xupdate xupdate) {
+    public void execute(Xupdate xupdate) {
 
-        Response response = new Response(xupdate.getSenderTelegramUser());
+        Response response = new Response(xupdate.getTelegramUser());
 
-        switch (super.step) {
+        switch (super.getStep()) {
 
             case -1:
                 response.setText("Ingrese Nombre del negocio.");
@@ -74,7 +72,7 @@ public class QuizNewBussines extends Quiz {
                 }
 
                 response.setText("Seleccione Area de operacion.");
-                response.setMenu(Methods.getAreas());
+               // response.setMenu(Methods.getAreas());
                 response.execute();
                 next();
 
@@ -97,19 +95,19 @@ public class QuizNewBussines extends Quiz {
                 if (Utils.isPositiveAnswer(xupdate.getText())) {
 
                     try {
-                        TelegramUser tu = xupdate.getSenderTelegramUser();
+                             Tuser tu = new Tuser(xupdate);
 
                         tu.setAccountType(AccountType.BUSSINES);
                         tu.setAccountId(bussines.getAccountId());
 
-                        DataBase.Accounts.TelegramUsers().update(tu);
+                        tu.update();
 
                         BalanceAccount balanceAccount = new BalanceAccount();
 
-                        DataBase.Contability.BalancesAccounts.BalancesAccounts().create(balanceAccount);
+                        balanceAccount.create();
                         bussines.setBalanceAccountNumber(balanceAccount.getAccountNumber());
                         bussines.setAccountStatus(AccountStatus.PAUSED);
-                        DataBase.Accounts.Bussiness.Bussiness().create(bussines);
+                        bussines.create();
 
                         response.setText("Registro completo.");
                         response.setMenu(MessageMenu.okAndDeleteMessage());

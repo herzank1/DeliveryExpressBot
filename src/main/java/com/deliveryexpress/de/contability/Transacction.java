@@ -6,6 +6,7 @@ package com.deliveryexpress.de.contability;
 
 import com.deliveryexpress.utils.Utils;
 import com.j256.ormlite.field.DatabaseField;
+import com.monge.xsqlite.xsqlite.BaseDao;
 import lombok.Data;
 
 /**
@@ -14,7 +15,7 @@ import lombok.Data;
  */
 
 @Data
-public class Transacction {
+public class Transacction extends BaseDao {
     
     @DatabaseField(id = true)
     String id;

@@ -6,7 +6,7 @@ package com.deliveryexpress.utils;
 
 import com.deliveryexpress.de.orders.Order;
 import com.deliveryexpress.de.orders.OrderStatus;
-import com.deliveryexpress.telegram.MessageMenu;
+import com.monge.tbotboot.messenger.MessageMenu;
 
 /**
  *

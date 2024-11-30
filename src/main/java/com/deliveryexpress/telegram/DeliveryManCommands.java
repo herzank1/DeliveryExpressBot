@@ -6,12 +6,14 @@ package com.deliveryexpress.telegram;
 
 import com.deliveryexpress.de.contability.BalanceAccount;
 import com.deliveryexpress.de.database.DataBase;
-import com.deliveryexpress.de.database.DbBalancer;
 import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.DeliveryMan;
-import com.deliveryexpress.objects.users.TelegramUser;
-import com.deliveryexpress.quizes.QuizNewDeliveryMan;
-import com.deliveryexpress.quizes.QuizesControl;
+import com.deliveryexpress.objects.users.Tuser;
+import com.monge.tbotboot.commands.Command;
+import com.monge.tbotboot.messenger.MessageMenu;
+import com.monge.tbotboot.messenger.Response;
+import com.monge.tbotboot.messenger.Xupdate;
+
 
 /**
  *
@@ -21,18 +23,18 @@ class DeliveryManCommands {
 
     static void execute(Xupdate xupdate) {
         
-        TelegramUser user = xupdate.getSenderTelegramUser();
+        Tuser user = Tuser.read(Tuser.class, xupdate.getSenderId());
         DeliveryMan deliveryMan = user.getDeliveryMan();
         
         if (deliveryMan.getAccountStatus().equals(AccountStatus.PAUSED)) {
-            Response.sendMessage(user, "Tu cuenta esta en proceso de aprovacion."
+            Response.sendMessage(xupdate.getTelegramUser(), "Tu cuenta esta en proceso de aprovacion."
                     + "\n contacte a un moderador para mas informacion.", null);
             return;
 
         }
         
           if (deliveryMan.getAccountStatus().equals(AccountStatus.INACTIVE)) {
-            Response.sendMessage(user, "Tu cuenta esta Inactiva!", null);
+            Response.sendMessage(xupdate.getTelegramUser(), "Tu cuenta esta Inactiva!", null);
             return;
 
         }
@@ -43,7 +45,7 @@ class DeliveryManCommands {
             case "/menu":
             case "/start":
                 BalanceAccount read = DataBase.Contability.BalancesAccounts.BalancesAccounts().read(deliveryMan.getBalanceAccountNumber());
-                Response.editMessage(xupdate.getSenderTelegramUser(), xupdate.getMessageId(),
+                Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(),
                         "Repartidor " + deliveryMan.getName()
                         + "\nID:" + user.getId()
                         + "\nCartera:" + read.getBalance() + "$", getMenu());

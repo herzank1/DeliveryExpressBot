@@ -3,9 +3,10 @@
  */
 package com.deliveryexpress.de;
 
+
 import com.deliveryexpress.de.database.DataBase;
-import com.deliveryexpress.telegram.BotsHandler;
 import com.deliveryexpress.utils.Settings;
+import com.monge.tbotboot.messenger.BotsHandler;
 
 
 /**
@@ -23,8 +24,7 @@ public class Main {
         DataBase.init();
         /*Cargamos los bots e iniciamos el mensajero executor*/
         BotsHandler.init();
-        /*activamos el sistema de seguridad contra ataques de fuerza bruta*/
-        SystemSecurity.init();
+       
 
     }
 }

@@ -8,11 +8,14 @@ import com.deliveryexpress.de.contability.BalanceAccount;
 import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.Bussines;
-import com.deliveryexpress.objects.users.DeliveryMan;
-import com.deliveryexpress.objects.users.TelegramUser;
+import com.deliveryexpress.objects.users.Tuser;
 import com.deliveryexpress.quizes.QuizNewOrderAtm;
 import com.deliveryexpress.quizes.QuizNewOrderManual;
-import com.deliveryexpress.quizes.QuizesControl;
+import com.monge.tbotboot.commands.Command;
+import com.monge.tbotboot.messenger.MessageMenu;
+import com.monge.tbotboot.messenger.Response;
+import com.monge.tbotboot.messenger.Xupdate;
+import com.monge.tbotboot.quizes.QuizesControl;
 
 /**
  *
@@ -22,18 +25,18 @@ class BussinesCommands {
 
     static void execute(Xupdate xupdate) {
 
-        TelegramUser user = xupdate.getSenderTelegramUser();
+        Tuser user = Tuser.read(Tuser.class, xupdate.getSenderId());
         Bussines bussines = user.getBussines();
 
         if (bussines.getAccountStatus().equals(AccountStatus.PAUSED)) {
-            Response.sendMessage(user, "Tu cuenta esta en proceso de aprovacion."
+            Response.sendMessage(xupdate.getTelegramUser(), "Tu cuenta esta en proceso de aprovacion."
                     + "\n contacte a un moderador para mas informacion.", null);
             return;
 
         }
 
         if (bussines.getAccountStatus().equals(AccountStatus.INACTIVE)) {
-            Response.sendMessage(user, "Tu cuenta esta Inactiva!", null);
+            Response.sendMessage(xupdate.getTelegramUser(), "Tu cuenta esta Inactiva!", null);
             return;
 
         }
@@ -44,7 +47,7 @@ class BussinesCommands {
             case "/menu":
             case "/start":
                 BalanceAccount read = DataBase.Contability.BalancesAccounts.BalancesAccounts().read(bussines.getBalanceAccountNumber());
-                Response.editMessage(xupdate.getSenderTelegramUser(), xupdate.getMessageId(),
+                Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(),
                         bussines.getName()
                         + "\nID:" + user.getId()
                         + "\nCartera:" + read.getBalance() + "$", getMenu());

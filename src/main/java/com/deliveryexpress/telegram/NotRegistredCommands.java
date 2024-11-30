@@ -6,7 +6,13 @@ package com.deliveryexpress.telegram;
 
 import com.deliveryexpress.quizes.QuizNewBussines;
 import com.deliveryexpress.quizes.QuizNewDeliveryMan;
-import com.deliveryexpress.quizes.QuizesControl;
+import com.monge.tbotboot.commands.Command;
+import com.monge.tbotboot.messenger.MessageMenu;
+import com.monge.tbotboot.messenger.Response;
+import com.monge.tbotboot.messenger.Xupdate;
+import com.monge.tbotboot.quizes.QuizesControl;
+import com.monge.tbotboot.utils.Symbols;
+
 
 /**
  *
@@ -22,7 +28,7 @@ class NotRegistredCommands {
             case "/menu":
             case "/start":
                 
-                Response.editMessage(xupdate.getSenderTelegramUser(),xupdate.getMessageId(), "No registrado: ID "+xupdate.getSenderId(), getMenu());
+                Response.editMessage(xupdate.getTelegramUser(),xupdate.getMessageId(), "No registrado: ID "+xupdate.getSenderId(), getMenu());
                 
                 break;
             

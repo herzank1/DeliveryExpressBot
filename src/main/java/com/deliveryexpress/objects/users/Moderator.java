@@ -5,6 +5,7 @@
 package com.deliveryexpress.objects.users;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.UUID;
 import lombok.Data;
 
@@ -14,7 +15,7 @@ import lombok.Data;
  */
 
 @Data
-public class Moderator {
+public class Moderator extends BaseDao {
     
     String telegramId;
 

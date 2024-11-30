@@ -8,14 +8,12 @@ import com.deliveryexpress.de.Global;
 import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.objects.users.Bussines;
 import com.deliveryexpress.objects.users.Customer;
-
-import com.deliveryexpress.telegram.MessageMenu;
-import com.deliveryexpress.telegram.Response;
-
-
-import com.deliveryexpress.telegram.Xupdate;
 import com.deliveryexpress.utils.Utils;
 import com.deliveryexpress.utils.Utils.GoogleMapsUtils.Route;
+import com.monge.tbotboot.messenger.MessageMenu;
+import com.monge.tbotboot.messenger.Response;
+import com.monge.tbotboot.messenger.Xupdate;
+import com.monge.tbotboot.quizes.Quiz;
 
 /**
  *
@@ -40,11 +38,11 @@ public class SubQuizGetCustomer extends Quiz {
     }
 
     @Override
-    void execute(Xupdate xupdate) {
+    public void execute(Xupdate xupdate) {
 
-        Response response = new Response(xupdate.getSenderTelegramUser());
+        Response response = new Response(xupdate.getTelegramUser());
 
-        switch (super.step) {
+        switch (super.getStep()) {
 
             case 0:
 
@@ -63,7 +61,7 @@ public class SubQuizGetCustomer extends Quiz {
                 }
                 
 
-                Customer customerByPhone = DataBase.Accounts.Customers.Customers().read(xupdate.getText());
+                Customer customerByPhone = Customer.read(Customer.class,xupdate.getText());
                 if (customerByPhone != null) {
                     this.customer = customerByPhone;
 
