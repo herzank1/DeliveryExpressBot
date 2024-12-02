@@ -18,6 +18,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class StorableOrder extends BaseDao {
      @DatabaseField(id = true)
-    String id;
+      String id;
     
 }

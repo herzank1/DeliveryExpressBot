@@ -33,6 +33,8 @@ public class Main {
                 .map(DBot::getBot)
                 .toArray(Bot[]::new));
         
+        OrdersControl.init();
+        
      
 
     }

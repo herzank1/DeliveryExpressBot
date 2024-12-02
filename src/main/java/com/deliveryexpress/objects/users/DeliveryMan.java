@@ -4,7 +4,6 @@
  */
 package com.deliveryexpress.objects.users;
 
-
 import com.deliveryexpress.utils.Utils;
 import com.j256.ormlite.field.DatabaseField;
 import com.monge.tbotboot.objects.Position;
@@ -22,22 +21,22 @@ import lombok.EqualsAndHashCode;
 public class DeliveryMan extends BaseDao {
 
     private static final long LAST_UPDATE_TOLERANCE = 60;
-    
+
     String telegramId;
 
     @DatabaseField(id = true)
     String accountId;
-     @DatabaseField
+    @DatabaseField
     String name;
-      @DatabaseField
+    @DatabaseField
     String phone;
-       @DatabaseField
+    @DatabaseField
     String deliveryManLevel;
-        @DatabaseField
+    @DatabaseField
     String balanceAccountNumber;
-         @DatabaseField
+    @DatabaseField
     String accountStatus;
-          @DatabaseField
+    @DatabaseField
     String tags;
 
     /*non storables values*/
@@ -56,8 +55,6 @@ public class DeliveryMan extends BaseDao {
         this.phone = phone;
         this.deliveryManLevel = DeliveryManLevel.TUERCA;
     }
-    
-    
 
     public boolean isSharingLocation() {
 
@@ -73,7 +70,7 @@ public class DeliveryMan extends BaseDao {
         }
 
     }
-    
+
     public Position getPosition() {
         return new Position(this.location);
     }

@@ -47,6 +47,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -521,13 +522,16 @@ public class Utils {
     }
 
     public static class DateUtils {
+        
+         // Formato deseado
+        static String DateTimeFormatPatternformat = "dd/MMM/yy h:mm a";
+
 
         public static String getTodayDate() {
 
             long unixToday = Instant.now().getEpochSecond();
             Instant instant = Instant.ofEpochSecond(unixToday);
-            String pattern = "MMMMM dd yyyy";
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateTimeFormatPatternformat);
             Date date = Date.from(instant);
 
             return simpleDateFormat.format(date);
@@ -535,9 +539,9 @@ public class Utils {
         }
 
         public static String getNowDate() {
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
             Date date = new Date();
-            return date.toString();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateTimeFormatPatternformat);
+            return simpleDateFormat.format(date);
         }
 
         public static long getUnixTimeStamp() {
@@ -609,8 +613,8 @@ public class Utils {
 
         public static String unixToDate(long unix) {
             Instant instant = Instant.ofEpochSecond(unix);
-            String pattern = "dd/MM/yyyy HH:mm:ss";
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+          
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateTimeFormatPatternformat);
 
             Date date = Date.from(instant);
             return simpleDateFormat.format(date);
@@ -625,7 +629,7 @@ public class Utils {
         public static long dateToUnix(String creationDate) {
 
             try {
-                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                DateFormat dateFormat = new SimpleDateFormat(DateTimeFormatPatternformat);
                 Date date = dateFormat.parse(creationDate);
                 long unixTime = (long) date.getTime() / 1000;
                 return unixTime;

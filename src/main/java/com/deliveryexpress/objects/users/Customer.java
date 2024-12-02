@@ -32,6 +32,13 @@ public class Customer extends BaseDao {
     public Customer() {
     }
 
+    /***
+     * 
+     * @param phone
+     * @param name
+     * @param lastAddress
+     * @param lastNote 
+     */
     public Customer(String phone, String name, String lastAddress, String lastNote) {
         this.phone = phone;
         this.name = name;

@@ -63,7 +63,9 @@ class BussinesCommands {
             case "/new_order_manual":
                 QuizesControl.add(new QuizNewOrderManual(xupdate.getSenderId(), bussines, false));
                 QuizesControl.execute(xupdate);
-
+                break;
+                
+            case "/my_orders":
                 break;
             case "/delete_msg":
                 Response.deleteMessage(xupdate);

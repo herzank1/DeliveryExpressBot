@@ -14,23 +14,19 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class BalanceAccount extends BaseDao {
 
-     @DatabaseField(id = true)
+    @DatabaseField(id = true)
     String accountNumber;
-      @DatabaseField
+    @DatabaseField
     float balance;
 
     public BalanceAccount() {
-        this.accountNumber=UUID.randomUUID().toString();
-        this.balance=0f;
+        this.accountNumber = UUID.randomUUID().toString();
+        this.balance = 0f;
     }
 
     public BalanceAccount(String accountNumber, float balance) {
         this.accountNumber = UUID.randomUUID().toString();
         this.balance = balance;
     }
-    
-    
 
 }
-   
-

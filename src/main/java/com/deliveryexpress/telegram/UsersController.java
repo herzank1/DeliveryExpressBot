@@ -4,6 +4,7 @@
  */
 package com.deliveryexpress.telegram;
 
+import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.Tuser;
 import com.google.gson.GsonBuilder;
@@ -31,7 +32,7 @@ public class UsersController implements CommandsHandlers{
                 QuizesControl.execute(xupdate);
             }
             
-            Tuser user = Tuser.read(Tuser.class, xupdate.getSenderId());
+            Tuser user = DataBase.Accounts.getTelegramUser(xupdate.getSenderId(),xupdate.getBotUserName());
 
             switch (user.getAccountType()) {
 
