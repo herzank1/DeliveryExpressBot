@@ -17,45 +17,45 @@ import com.monge.tbotboot.quizes.QuizesControl;
  *
  * @author DeliveryExpress
  */
-public class UsersController implements CommandsHandlers{
+public class UsersController implements CommandsHandlers {
 
-     @Override
-     public void execute(Xupdate xupdate) {
-         
-         System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(xupdate));
+    @Override
+    public void execute(Xupdate xupdate) {
+
+        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(xupdate));
 
         if (xupdate.isGroupMessage()) {
             Response.sendMessage(xupdate.getTelegramUser(), xupdate.getText(), null);
         } else {
-            
+
             if (QuizesControl.hasQuiz(xupdate.getSenderId())) {
                 QuizesControl.execute(xupdate);
             }
-            
-            Tuser user = DataBase.Accounts.getTelegramUser(xupdate.getSenderId(),xupdate.getBotUserName());
+
+            Tuser user = DataBase.Accounts.getTelegramUser(xupdate.getSenderId(), xupdate.getBotUserName());
 
             switch (user.getAccountType()) {
 
                 case AccountType.NOT_REGISTRED:
-                    
+
                     NotRegistredCommands.execute(xupdate);
 
                     break;
 
                 case AccountType.DELIVERYMAN:
-                    
+
                     DeliveryManCommands.execute(xupdate);
 
                     break;
 
                 case AccountType.BUSSINES:
-                    
+
                     BussinesCommands.execute(xupdate);
 
                     break;
 
                 case AccountType.MODERATOR:
-
+                    ModeratorCommands.execute(xupdate);
                     break;
             }
         }

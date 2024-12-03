@@ -32,12 +32,13 @@ public class Customer extends BaseDao {
     public Customer() {
     }
 
-    /***
-     * 
+    /**
+     * *
+     *
      * @param phone
      * @param name
      * @param lastAddress
-     * @param lastNote 
+     * @param lastNote
      */
     public Customer(String phone, String name, String lastAddress, String lastNote) {
         this.phone = phone;
@@ -47,7 +48,12 @@ public class Customer extends BaseDao {
     }
 
     public Position getPosition() {
-        return new Position(this.lastLoction);
+        if (this.lastLoction != null && !this.lastLoction.isEmpty()) {
+            return new Position(this.lastLoction);
+        } else {
+            return null;
+        }
+
     }
 
 }

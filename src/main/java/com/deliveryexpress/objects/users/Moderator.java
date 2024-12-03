@@ -14,26 +14,25 @@ import lombok.EqualsAndHashCode;
  *
  * @author DeliveryExpress
  */
-
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Moderator extends BaseDao {
-    
+
     String telegramId;
 
     @DatabaseField(id = true)
     String accountId;
-     @DatabaseField
+    @DatabaseField
     String name;
-      @DatabaseField
+    @DatabaseField
     String phone;
-       @DatabaseField
+    @DatabaseField
     String balanceAccountNumber;
-        @DatabaseField
+    @DatabaseField
     String accountStatus;
-         @DatabaseField
+    @DatabaseField
     String area;
-          @DatabaseField
+    @DatabaseField
     String tags;
 
     public Moderator() {
@@ -44,7 +43,5 @@ public class Moderator extends BaseDao {
         this.name = name;
         this.phone = phone;
     }
-    
-    
 
 }

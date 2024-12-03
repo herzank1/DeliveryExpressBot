@@ -56,39 +56,41 @@ public class QuizNewDeliveryMan extends Quiz {
                 break;
 
             case 2:
-                phone = xupdate.getText();
+                phone = xupdate.getText().replaceAll("[^0-9]", "");
+                if (phone.length() != 10) {
 
-                deliveryMan = new DeliveryMan(name, phone);
+                    response.setText("el telefono debe ser de 10 digitos, ingrese de nuevo.");
+                    response.execute();
+                } else {
+                    deliveryMan = new DeliveryMan(name, phone);
 
-                response.setText("Es correcta la informacion?\n" + deliveryMan.toString());
-                response.setMenu(MessageMenu.yesNo());
-                response.execute();
-                next();
+                    response.setText("Es correcta la informacion?\n" + deliveryMan.toString());
+                    response.setMenu(MessageMenu.yesNo());
+                    response.execute();
+                    next();
+                }
 
                 break;
 
             case 3:
 
                 if (Utils.isPositiveAnswer(xupdate.getText())) {
-                  
+
                     try {
                         Tuser tu = new Tuser(xupdate);
 
                         tu.setAccountType(AccountType.DELIVERYMAN);
                         tu.setAccountId(deliveryMan.getAccountId());
-                        
-                       
+
                         DataBase.Accounts.TelegramUsers().update(tu);
 
                         BalanceAccount balanceAccount = new BalanceAccount();
-                        
-                       
+
                         DataBase.Contability.BalancesAccounts.BalancesAccounts().create(balanceAccount);
                         deliveryMan.setBalanceAccountNumber(balanceAccount.getAccountNumber());
                         deliveryMan.setAccountStatus(AccountStatus.PAUSED);
                         DataBase.Accounts.Deliveries.Deliveries().create(deliveryMan);
-                        
-          
+
                         response.setText("Registro completo.");
                         response.setMenu(MessageMenu.okAndDeleteMessage());
                         response.execute();

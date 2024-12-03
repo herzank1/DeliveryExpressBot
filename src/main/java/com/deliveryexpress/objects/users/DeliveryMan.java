@@ -4,9 +4,12 @@
  */
 package com.deliveryexpress.objects.users;
 
+import com.deliveryexpress.utils.DateUtils;
 import com.deliveryexpress.utils.Utils;
 import com.j256.ormlite.field.DatabaseField;
 import com.monge.tbotboot.objects.Position;
+import com.monge.tbotboot.objects.Receptor;
+import com.monge.tbotboot.objects.TelegramUser;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.UUID;
 import lombok.Data;
@@ -58,7 +61,7 @@ public class DeliveryMan extends BaseDao {
 
     public boolean isSharingLocation() {
 
-        long unixTimeStamp = Utils.DateUtils.getUnixTimeStamp();
+        long unixTimeStamp = DateUtils.getUnixTimeStamp();
 
         long diff = unixTimeStamp - this.getLastLocationUpdate();
 
@@ -69,6 +72,11 @@ public class DeliveryMan extends BaseDao {
             return false;
         }
 
+    }
+    
+    public Receptor getReceptor(){
+        Tuser tuser = BaseDao.read(Tuser.class, this.telegramId);
+        return  tuser.getReceptor();
     }
 
     public Position getPosition() {

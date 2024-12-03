@@ -8,8 +8,8 @@ import com.deliveryexpress.de.Global;
 import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.objects.users.Bussines;
 import com.deliveryexpress.objects.users.Customer;
+import com.deliveryexpress.utils.Cotization;
 import com.deliveryexpress.utils.Utils;
-import com.deliveryexpress.utils.Utils.GoogleMapsUtils.Route;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.Response;
 import com.monge.tbotboot.messenger.Xupdate;
@@ -17,15 +17,14 @@ import com.monge.tbotboot.quizes.Quiz;
 
 /**
  *
- * @author DeliveryExpress
- * Sub questionario para seleccionar al cliente
+ * @author DeliveryExpress Sub questionario para seleccionar al cliente
  */
 public class SubQuizGetCustomer extends Quiz {
 
     QuizNewOrderAtm parent;
 
     Customer customer = new Customer();
-    Route route;
+    Cotization cotization;
 
     float deliveryCost;
     boolean finalized;
@@ -46,34 +45,34 @@ public class SubQuizGetCustomer extends Quiz {
 
             case 0:
 
-                response.setText("Ingrese el telefono del cliente, sin guines ni espacion (10 digitos)");
+                response.setText("Ingrese el telefono del cliente, sin guiones ni espacios (10 digitos)");
                 response.execute();
                 next();
 
                 break;
 
             case 1:
-                 if (xupdate.getText().length() < 10) {
-                    response.setText("❌ El telefono del cliente no puede ser menor a 10 digitos,"
-                            + "ingrese el telefono del cliente");
+                String phone = xupdate.getText().replaceAll("[^0-9]", "");
+                if (phone.length() != 10) {
+
+                    response.setText("el telefono debe ser de 10 digitos, ingrese de nuevo.");
                     response.execute();
-                    break;
-                }
-                
-
-                Customer customerByPhone = Customer.read(Customer.class,xupdate.getText());
-                if (customerByPhone != null) {
-                    this.customer = customerByPhone;
-
-                    //Cotizacion automatica//
-                    sendCotization(response);
-
-                    /*Cliente no existe*/
                 } else {
-                    this.customer.setPhone(xupdate.getText());
-                    response.setText("Ingrese Nombre");
-                    response.execute();
-                    next();
+                    Customer customerByPhone = Customer.read(Customer.class, xupdate.getText());
+                    if (customerByPhone != null) {
+                        this.customer = customerByPhone;
+
+                        //Cotizacion automatica//
+                        sendCotization(response);
+
+                        /*Cliente no existe*/
+                    } else {
+                        this.customer.setPhone(xupdate.getText());
+                        response.setText("Ingrese Nombre");
+                        response.execute();
+                        next();
+
+                    }
 
                 }
 
@@ -81,7 +80,7 @@ public class SubQuizGetCustomer extends Quiz {
 
             case 2:
 
-                customer.setName(xupdate.getText().replace("-", "").replace(" ", ""));
+                customer.setName(xupdate.getText().replaceAll("[^a-zA-Z\\s]", ""));
 
                 response.setText("Ingrese la direccion");
                 response.execute();
@@ -91,17 +90,15 @@ public class SubQuizGetCustomer extends Quiz {
 
             case 3:
                 /*case Cotizacion*/
-                customer.setLastAddress(xupdate.getText().replace("#", "").replace(",", " "));
+                customer.setLastAddress(xupdate.getText().replaceAll("[^a-zA-Z\\s]", ""));
                 //Cotizacion automatica//
                 sendCotization(response);
 
                 break;
 
             case 4:
-
                 customer.setLastNote(xupdate.getText());
-
-                finalized(response);
+                this.finalized(response);
 
                 break;
 
@@ -111,6 +108,8 @@ public class SubQuizGetCustomer extends Quiz {
                 switch (xupdate.getText()) {
 
                     case "confirm":
+                        
+                        customer.create();
 
                         response.setText("Ingrese la nota, codigo de acceso, entre calles, etc.");
                         response.setMenu(MessageMenu.noNoteButton());
@@ -143,14 +142,14 @@ public class SubQuizGetCustomer extends Quiz {
 
             case 11:
                 this.deliveryCost = Float.parseFloat(xupdate.getText());
-                
-                if (this.deliveryCost < parent.order.getBusssines().getKmBaseCost()) {
-                    response.setText("⚠️ La tarifa no puede ser menor a "+parent.order.getBusssines().getKmBaseCost()+
-                    ", ingrese la tarifa de envio que corresponda.");
+
+                if (this.deliveryCost < parent.order.getBusssines().getContract().getKmBaseCost()) {
+                    response.setText("⚠️ La tarifa no puede ser menor a " + parent.order.getBusssines().getContract().getKmBaseCost()
+                            + ", ingrese la tarifa de envio que corresponda.");
                     response.execute();
                     break;
                 }
-                
+
                 response.setText("Ingrese la nota, codigo de acceso, entre calles, etc.");
                 response.setMenu(MessageMenu.noNoteButton());
                 response.execute();
@@ -187,27 +186,14 @@ public class SubQuizGetCustomer extends Quiz {
     }
 
     private void sendCotization(Response response) {
+        try{
+         cotization = new Cotization(
+                  Global.Global().city,getBussines().getAddress(), this.customer.getLastAddress());
 
-        route = new Route(
-                getBussines().getAddress(), this.customer.getLastAddress(),Global.Global().city);
         
-        if (route.isNotFound()) {
-            response.setText("No se encontro esta direccion, verifique la informacion he intente de nuevo");
-            response.execute();
-            goTo(3);
-            return;
-        }
+        this.deliveryCost = cotization.getDeliveryCost(getBussines());
 
-        this.deliveryCost = route.getDeliveryCost(getBussines());
-
-        String cotizacion = String.join("\n", new String[]{
-            "Direccion ingresada: " + route.getTo(),
-            "Direccion encontrada (GoogleMaps): " + route.getGeoCodeTo(),
-            "Distancia: " + String.format("%.2f", route.getDistance()) + " km",
-            "Costo de envio: " + String.format("%.2f", route.getDeliveryCost(getBussines()))});
-        //********************//
-
-        response.setText(cotizacion
+        response.setText(cotization.toStringDetails(this.parent.order.getBusssines())
                 + "\nQue desea hacer?");
 
         response.setMenu(addressConfirmationMenu());
@@ -216,6 +202,9 @@ public class SubQuizGetCustomer extends Quiz {
 
         /* ir paso (10) Confirmacion de cliente encontrado*/
         goTo(10);
+        }catch(Exception e){e.printStackTrace();}
+
+       
 
     }
 
@@ -232,7 +221,7 @@ public class SubQuizGetCustomer extends Quiz {
         menu.addNewLine();
         menu.addButton("#️⃣ Selc. Tarifa Manual", "putdeliverycost");
         menu.addNewLine();
-        menu.addAbutton(new MessageMenu.Button("❌ Cerrar","/close"), true);
+        menu.addAbutton(new MessageMenu.Button("❌ Cerrar", "/close"), true);
 
         return menu;
 

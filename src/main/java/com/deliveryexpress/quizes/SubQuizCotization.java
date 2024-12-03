@@ -8,9 +8,10 @@ package com.deliveryexpress.quizes;
 import com.deliveryexpress.de.Global;
 import com.deliveryexpress.objects.users.Bussines;
 import com.deliveryexpress.objects.users.Customer;
+import com.deliveryexpress.utils.Cotization;
 import com.deliveryexpress.utils.Utils;
 
-import com.deliveryexpress.utils.Utils.GoogleMapsUtils.Route;
+
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.MessageMenu.Button;
 import com.monge.tbotboot.messenger.Response;
@@ -28,7 +29,7 @@ public class SubQuizCotization extends Quiz {
     Customer customer = new Customer();
 
     float deliveryCost;
-    private Route route;
+    private Cotization cotization;
     
 
     public SubQuizCotization(QuizNewOrderAtm father) {
@@ -56,7 +57,7 @@ public class SubQuizCotization extends Quiz {
             case 1:
 
                 /*case Cotizacion*/
-                customer.setLastAddress(xupdate.getText().replace("#", "").replace(",", " "));
+                customer.setLastAddress(xupdate.getText().replaceAll("[^a-zA-Z\\s]", ""));
                 //Cotizacion automatica//
                 sendCotization(response);
 
@@ -72,23 +73,24 @@ public class SubQuizCotization extends Quiz {
 
             case 3:
                 
-                if (xupdate.getText().length() < 10) {
-                    response.setText("El telefono del cliente no puede ser menor a 10 digitos,"
-                            + "ingrese el telefono del cliente");
+                   String phone = xupdate.getText().replaceAll("[^0-9]", "");
+                if (phone.length() != 10) {
+
+                    response.setText("el telefono debe ser de 10 digitos, ingrese de nuevo.");
                     response.execute();
-                    break;
+                } else {
+                    this.customer.setPhone(phone);
+                    response.setText("👤 Ingrese Nombre");
+                    response.execute();
+                    next();
                 }
-                
-                this.customer.setPhone(xupdate.getText());
-                response.setText("Ingrese Nombre");
-                response.execute();
-                next();
+             
 
                 break;
 
             case 4:
 
-                customer.setName(xupdate.getText().replace("-", "").replace(" ", ""));
+                customer.setName(xupdate.getText().replaceAll("[^a-zA-Z\\s]", ""));
 
                 response.setText("Ingrese la nota, codigo de acceso, entre calles, etc.");
                 response.setMenu(MessageMenu.noNoteButton());
@@ -148,8 +150,8 @@ public class SubQuizCotization extends Quiz {
                 
                 this.deliveryCost = Float.parseFloat(xupdate.getText());
                 
-                if (this.deliveryCost < parent.order.getBusssines().getKmBaseCost()) {
-                    response.setText("⚠️ La tarifa no puede ser menor a "+parent.order.getBusssines().getKmBaseCost()+
+                if (this.deliveryCost < parent.order.getBusssines().getContract().getKmBaseCost()) {
+                    response.setText("⚠️ La tarifa no puede ser menor a "+parent.order.getBusssines().getContract().getKmBaseCost()+
                     ", ingrese la tarifa de envio que corresponda.");
                     response.execute();
                     break;
@@ -181,7 +183,7 @@ public class SubQuizCotization extends Quiz {
         parent.setDeliveryCost(deliveryCost);
         response.setText("Ingrese el costo o valor de la Orden");
         response.execute();
-        super.setFinalized(this.isFinalized());
+        this.setFinalized(true);
 
     }
 
@@ -189,19 +191,12 @@ public class SubQuizCotization extends Quiz {
 
     private void sendCotization(Response response) {
 
-        route = new Route(
+        cotization = new Cotization(
                 getBussines().getAddress(), customer.getLastAddress(),Global.Global().city);
 
-        this.deliveryCost = route.getDeliveryCost(getBussines());
+        this.deliveryCost = cotization.getDeliveryCost(getBussines());
 
-        String cotizacion = String.join("\n", new String[]{
-            "Direccion ingresada: " + route.getTo(),
-            "Direccion encontrada (GoogleMaps): " + route.getGeoCodeTo(),
-            "Distancia: " + String.format("%.2f", route.getDistance()) + " km",
-            "Costo de envio: " + String.format("%.2f", route.getDeliveryCost(getBussines()))});
-        //********************//
-
-        response.setText(cotizacion
+       response.setText(cotization.toStringDetails(this.parent.order.getBusssines())
                 + "\nQue desea hacer?");
 
         response.setMenu(addressConfirmationMenu());

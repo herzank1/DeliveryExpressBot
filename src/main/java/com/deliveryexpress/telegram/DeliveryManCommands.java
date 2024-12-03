@@ -12,7 +12,7 @@ import com.deliveryexpress.de.orders.OrderStatus;
 import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.DeliveryMan;
 import com.deliveryexpress.objects.users.Tuser;
-import com.deliveryexpress.utils.Utils.DateUtils;
+import com.deliveryexpress.utils.DateUtils;
 import com.monge.tbotboot.commands.Command;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.Response;
@@ -29,6 +29,7 @@ public class DeliveryManCommands {
 
     static void execute(Xupdate xupdate) {
 
+     
         Tuser user = Tuser.read(Tuser.class, xupdate.getSenderId());
         DeliveryMan deliveryMan = user.getDeliveryMan();
 
@@ -48,6 +49,7 @@ public class DeliveryManCommands {
         if (xupdate.hasLocation()) {
             DeliveryMan get = OrdersControl.getDeliveries().get(deliveryMan.getAccountId());
             get.setLocation(xupdate.getLocation().toString());
+
             get.setLastLocationUpdate(DateUtils.getUnixTimeStamp());
             return;
         }
@@ -83,8 +85,13 @@ public class DeliveryManCommands {
                 break;
 
             case "/myorders":
-                ArrayList<Order> orders = OrdersControl.getOrdersOf(deliveryMan);
+                ArrayList<Order> orders = OrdersControl.getOrdersOf(deliveryMan, false);
                 Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), "Mis ordenes",
+                        getOrderListAsMenu(orders));
+                break;
+            case "/mytodayhistory":
+                orders = OrdersControl.getOrdersOf(deliveryMan, true);
+                Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), "Hoy",
                         getOrderListAsMenu(orders));
                 break;
 
@@ -93,10 +100,17 @@ public class DeliveryManCommands {
                 String orderId = command.getParam(2);
 
                 boolean changeOrderStatus = OrdersControl.changeOrderStatus(deliveryMan, statusCode, orderId);
-                if (changeOrderStatus) {
-                    Order o = OrdersControl.getOrder(orderId);
-                    Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), o.toTelegramString(),
-                            getCurrentOrdersDeliveryMenu(o));
+                try {
+                    if (changeOrderStatus) {
+                        Order o = OrdersControl.getOrder(orderId);
+                        Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), o.toTelegramString(),
+                                getCurrentOrdersDeliveryMenu(o));
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Response.sendMessage(deliveryMan.getReceptor(), e.getLocalizedMessage(), MessageMenu.okAndDeleteMessage());
 
                 }
 
@@ -138,9 +152,9 @@ public class DeliveryManCommands {
             case "/reject":
                 orderId = command.getParam(1);
                 o = OrdersControl.getOrder(orderId);
-                 success = OrdersControl.deliveryManRejectOrder(o, deliveryMan);
+                success = OrdersControl.deliveryManRejectOrder(o, deliveryMan);
                 if (success) {
-                     Response.deleteMessage(xupdate);
+                    Response.deleteMessage(xupdate);
                 } else {
 
                     Response.sendMessage(xupdate.getTelegramUser(), "Error desconocido!"
@@ -224,7 +238,9 @@ public class DeliveryManCommands {
     private static MessageMenu getOrderListAsMenu(ArrayList<Order> orders) {
         MessageMenu menu = new MessageMenu();
         for (Order o : orders) {
+
             menu.addButton("📦 " + o.getCustomer().getName(), "/vieworder&" + o.getId(), true);
+
         }
         menu.addBackButton("/menu");
 

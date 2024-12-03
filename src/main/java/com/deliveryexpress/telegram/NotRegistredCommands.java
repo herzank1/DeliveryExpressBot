@@ -6,13 +6,13 @@ package com.deliveryexpress.telegram;
 
 import com.deliveryexpress.quizes.QuizNewBussines;
 import com.deliveryexpress.quizes.QuizNewDeliveryMan;
+import com.deliveryexpress.quizes.QuizNewModerator;
 import com.monge.tbotboot.commands.Command;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.Response;
 import com.monge.tbotboot.messenger.Xupdate;
 import com.monge.tbotboot.quizes.QuizesControl;
 import com.monge.tbotboot.utils.Symbols;
-
 
 /**
  *
@@ -21,49 +21,56 @@ import com.monge.tbotboot.utils.Symbols;
 class NotRegistredCommands {
 
     static void execute(Xupdate xupdate) {
-     
+
         Command command = xupdate.getCommand();
-        switch(command.command()){
-        
+        switch (command.command()) {
+
             case "/menu":
             case "/start":
-                
-                Response.editMessage(xupdate.getTelegramUser(),xupdate.getMessageId(), "No registrado: ID "+xupdate.getSenderId(), getMenu());
-                
+
+                Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), "No registrado: ID " + xupdate.getSenderId(), getMenu());
+
                 break;
-            
+
             case "/dsingin":
-                
+
                 QuizesControl.add(new QuizNewDeliveryMan(xupdate.getSenderId()));
                 QuizesControl.execute(xupdate);
-                
+
                 break;
-                
-               case "/bsingin":
-                
+
+            case "/bsingin":
+
                 QuizesControl.add(new QuizNewBussines(xupdate.getSenderId()));
                 QuizesControl.execute(xupdate);
-                
-                break;    
-                
+
+                break;
+            case "/msingin":
+
+                QuizesControl.add(new QuizNewModerator(xupdate.getSenderId()));
+                QuizesControl.execute(xupdate);
+
+                break;
+
             case "/delete_msg":
                 Response.deleteMessage(xupdate);
-                
+
                 break;
-        
+
         }
-    
+
     }
-    
-    private static MessageMenu getMenu(){
-        
+
+    private static MessageMenu getMenu() {
+
         MessageMenu menu = new MessageMenu();
-        menu.addButton(Symbols.OK+" Registrar como Repartidor", "/dsingin",true);
-        menu.addButton(Symbols.OK+" Registrar como Negocio", "/bsingin",true);
-        menu.addButton(Symbols.INFO+" Informacion", "/info");
-        
+        menu.addButton(Symbols.OK + " Registrar como Repartidor", "/dsingin", true);
+        menu.addButton(Symbols.OK + " Registrar como Negocio", "/bsingin", true);
+        menu.addButton(Symbols.OK + " Registrar como Moderador", "/msingin", true);
+        menu.addButton(Symbols.INFO + " Informacion", "/info");
+
         return menu;
-    
+
     }
-    
+
 }

@@ -4,11 +4,11 @@
  */
 package com.deliveryexpress.quizes;
 
-
 import com.deliveryexpress.de.OrdersControl;
 import com.deliveryexpress.de.orders.Order;
 import com.deliveryexpress.objects.users.Bussines;
 import com.deliveryexpress.objects.users.Customer;
+import com.deliveryexpress.telegram.BussinesCommands;
 import com.deliveryexpress.utils.Utils;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.Response;
@@ -18,8 +18,7 @@ import com.monge.tbotboot.quizes.Quiz;
 
 /**
  *
- * @author DeliveryExpress
- * ingreso de ordenes de forma manual
+ * @author DeliveryExpress ingreso de ordenes de forma manual
  */
 public class QuizNewOrderManual extends Quiz {
 
@@ -43,7 +42,7 @@ public class QuizNewOrderManual extends Quiz {
 
             case 0:
 
-                response.setText("📞 Ingrese el telefono del cliente, sin guines ni espacion (10 digitos)");
+                response.setText("📞 Ingrese el telefono del cliente, sin guines ni espacios (10 digitos)");
                 response.execute();
                 next();
 
@@ -51,16 +50,23 @@ public class QuizNewOrderManual extends Quiz {
 
             case 1:
 
-                this.customer.setPhone(xupdate.getText().replace("-", "").replace(" ", ""));
-                response.setText("👤 Ingrese Nombre");
-                response.execute();
-                next();
+                String phone = xupdate.getText().replaceAll("[^0-9]", "");
+                if (phone.length() != 10) {
+
+                    response.setText("el telefono debe ser de 10 digitos, ingrese de nuevo.");
+                    response.execute();
+                } else {
+                    this.customer.setPhone(phone);
+                    response.setText("👤 Ingrese Nombre");
+                    response.execute();
+                    next();
+                }
 
                 break;
 
             case 2:
 
-                customer.setName(xupdate.getText().replace("-", "").replace(" ", ""));
+                customer.setName(xupdate.getText().replaceAll("[^a-zA-Z\\s]", ""));
 
                 response.setText("📍 Ingrese la direccion o link de google maps.");
                 response.execute();
@@ -70,7 +76,7 @@ public class QuizNewOrderManual extends Quiz {
 
             case 3:
                 /*case Cotizacion*/
-                customer.setLastAddress(xupdate.getText().replace("#", "").replace(",", ""));
+                customer.setLastAddress(xupdate.getText());
                 response.setText("🗓 Ingrese la nota, codigo de acceso, entre calles, etc.");
                 response.setMenu(MessageMenu.noNoteButton());
                 response.execute();
@@ -83,10 +89,10 @@ public class QuizNewOrderManual extends Quiz {
                 customer.setLastNote(xupdate.getText());
                 response.setText("🛵 Seleccione o Ingrese manualmente la tarifa de entrega, "
                         + "redondear los Km ejem: 4.5 = 5 km, basarse en la --> ruta <-- de google maps");
-                String navigateToUrl = Utils.GoogleMapsUtils.navigateToUrl(this.order.getBusssines().getAddress(), customer.getLastAddress());
+                // String navigateToUrl = Utils.GoogleMapsUtils.navigateToUrl(this.order.getBusssines().getAddress(), customer.getLastAddress());
 
                 MessageMenu menu = new MessageMenu();
-                menu.addUrlButton("📌 ver Maps", navigateToUrl);
+                // menu.addUrlButton("📌 ver Maps", navigateToUrl);
                 menu.addRowsButtonsList(getDeliveryCostTable().getRowList());
                 response.setMenu(menu);
                 response.execute();
@@ -100,14 +106,13 @@ public class QuizNewOrderManual extends Quiz {
                     order.setCustomer(customer);
                     order.setDeliveryCost(Float.parseFloat(xupdate.getText()));
 
-                    if (order.getDeliveryCost() < order.getBusssines().getKmBaseCost()) {
-                        response.setText("⚠️ La tarifa no puede ser menor a " + order.getBusssines().getKmBaseCost()
+                    if (order.getDeliveryCost() < order.getBusssines().getContract().getKmBaseCost()) {
+                        response.setText("⚠️ La tarifa no puede ser menor a " + order.getBusssines().getContract().getKmBaseCost()
                                 + ", ingrese la tarifa de envio que corresponda.");
                         response.execute();
                         break;
                     }
 
-                    
                     response.setText("💴 Ingrese el Costo de orden (no signos, ni decimales) o indique 0 si ya esta pagada.");
                     response.setMenu(new MessageMenu("Ya Pagada! ", "0"));
                     response.execute();
@@ -148,7 +153,7 @@ public class QuizNewOrderManual extends Quiz {
 
                 try {
                     order.setPreparationTimeMinutes(Integer.parseInt(xupdate.getText()));
-                    response.setText("Esta correcta la informacion❓\n\n" + order.toString());
+                    response.setText("Esta correcta la informacion❓\n\n" + order.toTelegramString());
                     response.setMenu(MessageMenu.yesNo());
                     response.execute();
                     next();
@@ -168,13 +173,15 @@ public class QuizNewOrderManual extends Quiz {
                     response.setAction(ResponseAction.EDIT_MESSAGE);
                     response.setEditMessageId(xupdate.getMessageId());
                     response.setText("✅ Orden recibida correctamente..."
-                            + "\n\n" + this.order.toString());
-                    response.setMenu(MessageMenu.refreshButton("/refresh&" + this.order.getId()));
+                            + "\n\n" + this.order.toTelegramString());
+                    response.setMenu(BussinesCommands.getCurrentOrdersBussinesMenu(order));
                     response.execute();
 
                     this.destroy();
 
                 } else {
+                    response.setAction(ResponseAction.EDIT_MESSAGE);
+                    response.setEditMessageId(xupdate.getMessageId());
                     response.setText("🚫 Orden cancelada");
                     response.setMenu(MessageMenu.okAndDeleteMessage());
                     response.execute();
@@ -188,9 +195,9 @@ public class QuizNewOrderManual extends Quiz {
 
     }
 
-   MessageMenu preparationTimeMenu() {
+    MessageMenu preparationTimeMenu() {
 
-     MessageMenu menu = new MessageMenu();
+        MessageMenu menu = new MessageMenu();
         menu.addButton("⏱ 10 min", "10", true);
         menu.addButton("⏱ 15 min", "15", true);
         menu.addButton("⏱ 30 min", "30", true);

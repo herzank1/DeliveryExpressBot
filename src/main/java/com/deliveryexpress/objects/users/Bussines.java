@@ -8,6 +8,7 @@ import com.deliveryexpress.objects.GroupArea;
 import com.j256.ormlite.field.DatabaseField;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.objects.Position;
+import com.monge.tbotboot.objects.Receptor;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import static com.monge.xsqlite.xsqlite.BaseDao.read;
 import java.util.UUID;
@@ -21,7 +22,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Bussines extends BaseDao {
-    
+
     String telegramId;
 
     @DatabaseField(id = true)
@@ -40,17 +41,8 @@ public class Bussines extends BaseDao {
     String accountStatus;
     @DatabaseField
     String areaId;
-
-    String serviceType;
-
-    float serviceCost;
-    float kmBaseCost;
-    float kmExtraCost;
-    int kmBase; //Banderazo
-
-    String ownerName;
-    String schedule;
-    String tags;
+    @DatabaseField
+    String contractId;
 
     public Bussines() {
         this.accountId = UUID.randomUUID().toString();
@@ -69,11 +61,39 @@ public class Bussines extends BaseDao {
     }
 
     public MessageMenu getDeliveryTable() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        MessageMenu menu = new MessageMenu();
+
+        menu.addButton("0 - 5 km = 45", String.valueOf(45), true);
+        menu.addButton("6 km = " + String.valueOf(45 + 9), String.valueOf(45 + 9), true);
+        menu.addButton("7 km = " + String.valueOf(45 + 9 + 9), String.valueOf(45 + 9 + 9), true);
+        menu.addButton("8 km = " + String.valueOf(45 + 9 + 9 + 9), String.valueOf(45 + 9 + 9 + 9), true);
+
+        return menu;
+
     }
 
     public GroupArea getGrouArea() {
         GroupArea read = GroupArea.read(this.getClass(), this.areaId);
+        return read;
+
+    }
+
+    public Receptor getReceptor() {
+        Tuser tuser = BaseDao.read(Tuser.class, this.telegramId);
+        return tuser.getReceptor();
+    }
+
+    /*return safe Contract*/
+    public BussinesContract getContract() {
+        BussinesContract read = BussinesContract.read(BussinesContract.class, this.contractId);
+        if (read == null) {
+            read = new BussinesContract();
+            this.setContractId(read.getId());
+            this.update();
+            read.create();
+        }
+
         return read;
 
     }

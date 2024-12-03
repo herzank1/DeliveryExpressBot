@@ -4,6 +4,7 @@
  */
 package com.deliveryexpress.de.contability;
 
+import com.deliveryexpress.utils.DateUtils;
 import com.deliveryexpress.utils.Utils;
 import com.j256.ormlite.field.DatabaseField;
 import com.monge.xsqlite.xsqlite.BaseDao;
@@ -31,7 +32,7 @@ public class Transacction extends BaseDao {
     String date;
 
     public Transacction() {
-        this.date = Utils.DateUtils.getNowDate();
+        this.date = DateUtils.getNowDate();
     }
 
     public Transacction(String from, String to, float mount, String concept, String reference) {
@@ -40,7 +41,7 @@ public class Transacction extends BaseDao {
         this.mount = mount;
         this.concept = concept;
         this.reference = reference;
-        this.date = Utils.DateUtils.getNowDate();
+        this.date = DateUtils.getNowDate();
     }
 
  

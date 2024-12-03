@@ -10,6 +10,7 @@ import com.deliveryexpress.de.orders.StorableOrder;
 import com.deliveryexpress.objects.GroupArea;
 import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.Bussines;
+import com.deliveryexpress.objects.users.BussinesContract;
 import com.deliveryexpress.objects.users.Customer;
 import com.deliveryexpress.objects.users.DBot;
 import com.deliveryexpress.objects.users.DeliveryMan;
@@ -37,6 +38,7 @@ public class DataBase {
                 Tuser.class,
                 Moderator.class,
                 Bussines.class,
+                BussinesContract.class,
                 Customer.class,
                 DeliveryMan.class,
                 GroupArea.class,

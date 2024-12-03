@@ -9,9 +9,10 @@ import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.Bussines;
 import com.deliveryexpress.objects.users.Tuser;
-
+import com.deliveryexpress.utils.GoogleMapsUtils;
 
 import com.deliveryexpress.utils.Utils;
+import com.google.maps.model.LatLng;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.Response;
 import com.monge.tbotboot.messenger.Xupdate;
@@ -38,14 +39,14 @@ public class QuizNewBussines extends Quiz {
 
         switch (super.getStep()) {
 
-            case -1:
+            case 0:
                 response.setText("Ingrese Nombre del negocio.");
                 response.execute();
                 next();
 
                 break;
 
-            case 0:
+            case 1:
                 name = xupdate.getText();
                 response.setText("Ingrese telefono del Negocio.");
                 response.execute();
@@ -53,32 +54,46 @@ public class QuizNewBussines extends Quiz {
 
                 break;
 
-            case 1:
-                phone = xupdate.getText();
-                response.setText("Ingrese direccion o ubicacion del Negocio."
-                        + "Si es posible tomarla de Google.");
-
-                response.execute();
-                next();
-
-                break;
-
             case 2:
+                phone = xupdate.getText().replaceAll("[^0-9]", "");
+                if (phone.length() != 10) {
 
-                if (xupdate.hasLocation()) {
-                    bussines.setLocation(xupdate.getLocation().toString());
+                    response.setText("el telefono debe ser de 10 digitos, ingrese de nuevo.");
+                    response.execute();
                 } else {
-                    address = xupdate.getText();
-                }
+                    phone = xupdate.getText();
+                    response.setText("Ingrese direccion o ubicacion del Negocio. "
+                            + "Si es posible tomarla de Google.");
 
-                response.setText("Seleccione Area de operacion.");
-               // response.setMenu(Methods.getAreas());
-                response.execute();
-                next();
+                    response.execute();
+                    next();
+                }
 
                 break;
 
             case 3:
+
+                if (xupdate.hasLocation()) {
+                    bussines.setLocation(xupdate.getLocation().toString());
+                    String geoCodeLocation = GoogleMapsUtils.geoCodeLocation(new LatLng(xupdate.getLocation().getLatitud(),
+                            xupdate.getLocation().getLongitud()));
+                    address = geoCodeLocation;
+                } else {
+
+                    address = xupdate.getText();
+                    String geoCodeAddress = GoogleMapsUtils.geoCodeAddress(xupdate.getText());
+                    address = geoCodeAddress;
+
+                }
+
+                response.setText("Seleccione Area de operacion.");
+                // response.setMenu(Methods.getAreas());
+                response.execute();
+                next();
+
+                break;
+
+            case 4:
                 area = xupdate.getText();
 
                 bussines = new Bussines(name, phone, address, area);
@@ -90,12 +105,12 @@ public class QuizNewBussines extends Quiz {
 
                 break;
 
-            case 4:
+            case 5:
 
                 if (Utils.isPositiveAnswer(xupdate.getText())) {
 
                     try {
-                             Tuser tu = new Tuser(xupdate);
+                        Tuser tu = new Tuser(xupdate);
 
                         tu.setAccountType(AccountType.BUSSINES);
                         tu.setAccountId(bussines.getAccountId());
