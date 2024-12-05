@@ -10,7 +10,8 @@ import com.deliveryexpress.de.orders.StorableOrder;
 import com.deliveryexpress.objects.GroupArea;
 import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.Bussines;
-import com.deliveryexpress.objects.users.BussinesContract;
+import com.deliveryexpress.de.contability.BussinesContract;
+import com.deliveryexpress.de.contability.Payment;
 import com.deliveryexpress.objects.users.Customer;
 import com.deliveryexpress.objects.users.DBot;
 import com.deliveryexpress.objects.users.DeliveryMan;
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
 public class DataBase {
 
     public static void init() {
-        
+
         System.out.println("Init DataBase...");
 
         ConnectionPoolManager.addConnection("db_accounts.sqlite",
@@ -47,53 +48,58 @@ public class DataBase {
 
         ConnectionPoolManager.addConnection("db_contability.sqlite",
                 Transacction.class,
-                BalanceAccount.class
+                BalanceAccount.class,
+                Payment.class
         );
-        
-           ConnectionPoolManager.addConnection("db_ordersHistory.sqlite",
+
+        ConnectionPoolManager.addConnection("db_ordersHistory.sqlite",
                 StorableOrder.class
         );
-        
-           System.out.println("success!");
 
-     
-
-       
+        System.out.println("success!");
 
     }
 
-   
-
     public static class Accounts {
 
-        public static Tuser getTelegramUser(String id, String node) {
-            Tuser read = null;
-
-            read = TelegramUsers().read(id);
-
-
-            /*si no existe creamos uno*/
-            if (read == null) {
-                read = new Tuser(id, node, false, AccountType.NOT_REGISTRED, null);
-               ConnectionPoolManager.getDato(Tuser.class).create(read);
-                
-                
-
-            } else {
-                /*si si existe pero el node es diferente, actualizamos el node*/
-                if (!read.getLastNodeBot().equals(node)) {
-                    read.setLastNodeBot(node);
-                    ConnectionPoolManager.getDato(Tuser.class).update(read);
-
-                }
-
+        public static Tuser getTelegramGroup(Xupdate xupdate) {
+            if (!xupdate.isGroupMessage()) {
+                return null;
             }
+            return processTelegramUser(xupdate.getFromId(),xupdate.getBotUserName(), AccountType.IS_GROUP);
+        }
+
+        public static Tuser getTelegramUser(Xupdate xupdate) {
+            
+            return processTelegramUser(xupdate.getSenderId(),xupdate.getBotUserName(), AccountType.NOT_REGISTRED);
+        }
+
+        public static Tuser processTelegramUser(String id,String bot ,String accountType) {
+            Tuser read = TelegramUsers().read(id);
+
+            if (read == null) {
+                // Si no existe, creamos uno nuevo
+                read = new Tuser(
+                        id,
+                        bot,
+                        false,
+                        accountType,
+                        null
+                );
+                read.create();
+            }
+
+            // Si el nodo ha cambiado, actualizamos
+            if (!bot.equals(read.getLastNodeBot())) {
+                read.setLastNodeBot(bot);
+                read.update();
+            }
+
             return read;
         }
 
         public static GenericDao<Tuser, String> TelegramUsers() {
 
-           
             return ConnectionPoolManager.getDato(Tuser.class);
 
         }
@@ -164,7 +170,7 @@ public class DataBase {
                 BalanceAccount cuentaSegurosOrdenes = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.SERGUROS_ORDENES);
                 if (cuentaSegurosOrdenes == null) {
                     cuentaSegurosOrdenes = new BalanceAccount(MainBalancesAccountsIDs.SERGUROS_ORDENES, 0f);
-                   ConnectionPoolManager.getDato(BalanceAccount.class).create(cuentaSegurosOrdenes);
+                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cuentaSegurosOrdenes);
                 }
 
                 /* Verificar y crear cuenta de Seguros Repartidores */
@@ -178,7 +184,7 @@ public class DataBase {
                 BalanceAccount cajachica = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.CAJA_CHICA);
                 if (cajachica == null) {
                     cajachica = new BalanceAccount(MainBalancesAccountsIDs.CAJA_CHICA, 0f);
-                  ConnectionPoolManager.getDato(BalanceAccount.class).create(cajachica);
+                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cajachica);
                 }
 
                 /* Verificar y crear cuenta de Emergencias */
@@ -189,7 +195,7 @@ public class DataBase {
                 }
 
                 /* Verificar y crear cuenta de Cuotas Repartidores */
-                BalanceAccount cuotasRepas =(BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.CUOTAS_REPARTIDORES);
+                BalanceAccount cuotasRepas = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.CUOTAS_REPARTIDORES);
                 if (cuotasRepas == null) {
                     cuotasRepas = new BalanceAccount(MainBalancesAccountsIDs.CUOTAS_REPARTIDORES, 0f);
                     ConnectionPoolManager.getDato(BalanceAccount.class).create(cuotasRepas);

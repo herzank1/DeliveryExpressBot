@@ -44,4 +44,15 @@ public class Moderator extends BaseDao {
         this.phone = phone;
     }
 
+    public String toStringForTelegram() {
+        return "🆔 Telegram ID: " + telegramId + "\n"
+                + "💳 Account ID: " + accountId + "\n"
+                + "👤 Name: " + name + "\n"
+                + "📞 Phone: " + phone + "\n"
+                + "🏦 Balance Account Number: " + balanceAccountNumber + "\n"
+                + "🔓 Account Status: " + accountStatus + "\n"
+                + "🌍 Area: " + area + "\n"
+                + "🏷️ Tags: " + tags;
+    }
+
 }

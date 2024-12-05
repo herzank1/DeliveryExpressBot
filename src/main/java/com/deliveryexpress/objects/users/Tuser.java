@@ -85,4 +85,12 @@ public class Tuser extends BaseDao {
         return new Receptor(this.id, this.lastNodeBot);
     }
 
+    public String toStringForTelegram() {
+        return "🆔 ID: " + id + "\n"
+                + "🤖 Last Node Bot: " + lastNodeBot + "\n"
+                + "⛔ Blacklist: " + (blackList ? "Yes" : "No") + "\n"
+                + "📂 Account Type: " + accountType + "\n"
+                + "💳 Account ID: " + accountId;
+    }
+
 }

@@ -83,4 +83,15 @@ public class DeliveryMan extends BaseDao {
         return new Position(this.location);
     }
 
+   public String toStringForTelegram() {
+    return "🆔 Telegram ID: " + telegramId + "\n" +
+           "💳 Account ID: " + accountId + "\n" +
+           "👤 Name: " + name + "\n" +
+           "📞 Phone: " + phone + "\n" +
+           "⭐ Delivery Man Level: " + deliveryManLevel + "\n" +
+           "🏦 Balance Account Number: " + balanceAccountNumber + "\n" +
+           "🔓 Account Status: " + accountStatus + "\n" +
+           "🏷️ Tags: " + tags;
+}
+
 }

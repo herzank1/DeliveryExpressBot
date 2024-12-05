@@ -6,17 +6,21 @@ package com.deliveryexpress.telegram;
 
 import com.deliveryexpress.de.OrdersControl;
 import com.deliveryexpress.de.contability.BalanceAccount;
+import com.deliveryexpress.de.contability.Payment;
 import com.deliveryexpress.de.database.DataBase;
+import com.deliveryexpress.de.gui.GUIScreenAccounts;
+import com.deliveryexpress.de.gui.GUIScreenGroups;
 import com.deliveryexpress.de.orders.Order;
 import com.deliveryexpress.de.orders.OrderStatus;
 import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.Moderator;
 import com.deliveryexpress.objects.users.Tuser;
-import com.deliveryexpress.utils.PageListViewer;
+import com.monge.tbotboot.utils.PageListViewer;
 import com.monge.tbotboot.commands.Command;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.Response;
 import com.monge.tbotboot.messenger.Xupdate;
+import com.monge.tbotboot.quizes.QuizesControl;
 import java.util.ArrayList;
 
 /**
@@ -56,37 +60,48 @@ public class ModeratorCommands {
 
                 break;
 
+            case "/accounts":
+                QuizesControl.add(new GUIScreenAccounts(xupdate.getSenderId()));
+                QuizesControl.execute(xupdate);
+
+                break;
+
+            case "/areas":
+                QuizesControl.add(new GUIScreenGroups(xupdate.getSenderId()));
+                QuizesControl.execute(xupdate);
+
+                break;
+
             case "/myorders":
-              
-                    ArrayList<Order> orders = OrdersControl.getOrdersOf(moderator, false);
 
-                    PageListViewer book = new PageListViewer(orders, 8);
-                    
-                    int page = book.getValueOf(command.getParam(1));
-                    MessageMenu menu = book.getNavMenu(page);
+                ArrayList<Order> orders = OrdersControl.getOrdersOf(moderator, false);
 
-                    /*agregamos las ordenes a visualizar*/
-                    menu.merge(getOrderListAsMenu(book.getPage(page)));
+                PageListViewer book = new PageListViewer(orders, 8);
 
-                    Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), orders.size()+" orden(es) - Pag. "+page,
-                            menu);
-             
+                int page = book.getValueOf(command.getParam(1));
+                MessageMenu menu = book.getNavMenu("/myorders&", page);
+
+                /*agregamos las ordenes a visualizar*/
+                menu.merge(getOrderListAsMenu(book.getPage(page)));
+
+                Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), orders.size() + " orden(es) - Pag. " + page,
+                        menu);
 
                 break;
 
             case "/mytodayhistory":
                 orders = OrdersControl.getOrdersOf(moderator, true);
-                     book = new PageListViewer(orders, 8);
-                    
-                     page = book.getValueOf(command.getParam(1));
-                     menu = book.getNavMenu(page);
+                book = new PageListViewer(orders, 8);
 
-                    /*agregamos las ordenes a visualizar*/
-                    menu.merge(getOrderListAsMenu(book.getPage(page)));
+                page = book.getValueOf(command.getParam(1));
+                menu = book.getNavMenu("/myorders&", page);
 
-                    Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), orders.size()+" orden(es) finalizadas - Pag. "+page,
-                            menu);
-             
+                /*agregamos las ordenes a visualizar*/
+                menu.merge(getOrderListAsMenu(book.getPage(page)));
+
+                Response editMessage = Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), orders.size() + " orden(es) finalizadas - Pag. " + page,
+                        menu);
+
                 break;
 
             case "/vieworder":
@@ -98,16 +113,60 @@ public class ModeratorCommands {
                 }
 
                 try {
-                    Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), o.toTelegramStringForMod(),
+                    Response editMessage1 = Response.editHtmlMessage(xupdate.getTelegramUser(), xupdate.getMessageId(), o.toTelegramStringForModHtml(),
                             getCurrentOrdersModMenu(o));
+
+                    System.out.println(editMessage1.getText() + "\n is html " + editMessage1.isHtml());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 break;
 
-        }
+            case "/payment":
 
+                try {
+                    String action = command.getParam(1);
+                    String id = command.getParam(2);
+
+                    Payment pay = Payment.read(Payment.class, id);
+
+                    if (pay != null) {
+                        switch (action) {
+
+                            case Payment.Status.APROVED:
+                                pay.aprove();
+                                Response.sendMessage(pay.getReceptor(), "Tu pago ha sido aprovado!"
+                                        +"\n"+pay.toStringForTelegram(), MessageMenu.okAndDeleteMessage());
+                                break;
+
+                            case Payment.Status.REJECT:
+                                pay.reject("No recibido");
+                                break;
+
+                        }
+
+                        Response.deleteMessage(xupdate);
+                        Response.sendMessage(xupdate.getTelegramUser(),
+                                pay.toStringForTelegram(),
+                                null);
+
+                    } else {
+                        Response.deleteMessage(xupdate);
+                        Response.sendMessage(xupdate.getTelegramUser(),
+                                "Este pago no existe.",
+                                null);
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Response.sendMessage(xupdate.getTelegramUser(), e.getMessage(),
+                            null);
+
+                    break;
+                }
+
+        }
     }
 
     private static MessageMenu getCurrentOrdersModMenu(Order o) {
@@ -151,7 +210,15 @@ public class ModeratorCommands {
         MessageMenu menu = new MessageMenu();
         for (Order o : orders) {
 
-            menu.addButton("📦 " + o.getCustomer().getName(), "/vieworder&" + o.getId(), true);
+            String text = OrderStatus.getEmoji(o.getStatus()) + " ";
+            text += "👤 " + o.getCustomer().getName();
+
+            if (o.getDeliveryMan() != null) {
+
+                text += " 🚚 " + o.getDeliveryMan().getName();
+            }
+
+            menu.addButton(text, "/vieworder&" + o.getId(), true);
 
         }
         menu.addBackButton("/menu");
@@ -166,7 +233,9 @@ public class ModeratorCommands {
 
         menu.addButton("🗒 Ordenes", "/myorders", true);
         menu.addButton("🕰 Historial (Hoy)", "/mytodayhistory", true);
-        // menu.addButton("💳 Mi cartera", "/mywallet", true);
+        menu.addButton("💻 Cuentas", "/accounts", true);
+        menu.addButton("💻 Grupos y areas", "/areas", true);
+        menu.addButton("💳 Mi cartera", "/accounts", true);
         menu.addButton("♻ Actualizar", "/menu", true);
 
         return menu;

@@ -7,6 +7,7 @@ package com.deliveryexpress.quizes;
 import com.deliveryexpress.de.Global;
 import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.objects.users.Bussines;
+import com.deliveryexpress.de.contability.BussinesContract;
 import com.deliveryexpress.objects.users.Customer;
 import com.deliveryexpress.utils.Cotization;
 import com.deliveryexpress.utils.Utils;
@@ -186,14 +187,16 @@ public class SubQuizGetCustomer extends Quiz {
     }
 
     private void sendCotization(Response response) {
+        
+         BussinesContract contract = this.parent.order.getBusssines().getContract();
         try{
          cotization = new Cotization(
                   Global.Global().city,getBussines().getAddress(), this.customer.getLastAddress());
 
         
-        this.deliveryCost = cotization.getDeliveryCost(getBussines());
+        this.deliveryCost = cotization.getDeliveryCost(contract);
 
-        response.setText(cotization.toStringDetails(this.parent.order.getBusssines())
+        response.setText(cotization.toStringDetails(contract)
                 + "\nQue desea hacer?");
 
         response.setMenu(addressConfirmationMenu());

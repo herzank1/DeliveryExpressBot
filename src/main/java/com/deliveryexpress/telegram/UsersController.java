@@ -9,7 +9,6 @@ import com.deliveryexpress.objects.users.AccountType;
 import com.deliveryexpress.objects.users.Tuser;
 import com.google.gson.GsonBuilder;
 import com.monge.tbotboot.commands.CommandsHandlers;
-import com.monge.tbotboot.messenger.Response;
 import com.monge.tbotboot.messenger.Xupdate;
 import com.monge.tbotboot.quizes.QuizesControl;
 
@@ -22,17 +21,37 @@ public class UsersController implements CommandsHandlers {
     @Override
     public void execute(Xupdate xupdate) {
 
-        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(xupdate));
+        try {
+           // System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(xupdate));
+            System.out.println(xupdate.toStringDetails());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (xupdate.isGroupMessage()) {
-            Response.sendMessage(xupdate.getTelegramUser(), xupdate.getText(), null);
+            Tuser group = DataBase.Accounts.getTelegramGroup(xupdate);
+            Tuser user = DataBase.Accounts.getTelegramUser(xupdate);
+
+            switch (user.getAccountType()) {
+
+                case AccountType.DELIVERYMAN:
+
+                    GroupDeliveryManCommands.execute(xupdate);
+
+                    break;
+
+                case AccountType.MODERATOR:
+                    GroupModeratorCommands.execute(xupdate);
+                    break;
+            }
         } else {
+
+            Tuser user = DataBase.Accounts.getTelegramUser(xupdate);
 
             if (QuizesControl.hasQuiz(xupdate.getSenderId())) {
                 QuizesControl.execute(xupdate);
             }
-
-            Tuser user = DataBase.Accounts.getTelegramUser(xupdate.getSenderId(), xupdate.getBotUserName());
 
             switch (user.getAccountType()) {
 

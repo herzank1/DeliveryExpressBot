@@ -173,7 +173,7 @@ public class DeliveryManCommands {
 
     }
 
-    private static MessageMenu getCurrentOrdersDeliveryMenu(Order o) {
+    public static MessageMenu getCurrentOrdersDeliveryMenu(Order o) {
 
         MessageMenu menu = new MessageMenu();
 

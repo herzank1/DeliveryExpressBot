@@ -29,4 +29,17 @@ public class BalanceAccount extends BaseDao {
         this.balance = balance;
     }
 
+    public String toTelegramString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("🆔 " + this.accountNumber).append("\n");
+        sb.append("💵 Saldo: " + this.balance).append("\n")
+                .append("\n");
+
+        return sb.toString();
+    }
+
+    public String getReference() {
+    return this.accountNumber.toUpperCase().replace("-", "").substring(0,7);
+    }
+
 }

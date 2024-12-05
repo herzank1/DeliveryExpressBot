@@ -6,6 +6,7 @@ package com.deliveryexpress.utils;
 
 import com.deliveryexpress.de.Global;
 import com.deliveryexpress.objects.users.Bussines;
+import com.deliveryexpress.de.contability.BussinesContract;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.DistanceMatrix;
@@ -67,11 +68,16 @@ public class Cotization {
         }
     }
 
-    public float getDeliveryCost(Bussines bussines) {
+    /***
+     * Obtenemos el costo de envio basados en el crontrato
+     * @param bussines
+     * @return 
+     */
+    public float getDeliveryCost(BussinesContract contract) {
 
-        int kmBase = bussines.getContract().getKmBase();
-        float kmBaseCost = bussines.getContract().getKmBaseCost();
-        float kmExtraCost = bussines.getContract().getKmExtraCost();
+        int kmBase = contract.getKmBase();
+        float kmBaseCost = contract.getKmBaseCost();
+        float kmExtraCost = contract.getKmExtraCost();
 
         float sum = 0;
         float kmsExtras = 0;
@@ -92,14 +98,14 @@ public class Cotization {
 
     }
 
-    public String toStringDetails(Bussines bussines) {
+    public String toStringDetails(BussinesContract contract) {
 
         StringBuilder sb = new StringBuilder();
         sb.append("Direccion: ").append(this.getTo()).append("\n");
         sb.append("Distancia desde el negocio: ")
                 .append(String.format("%.2f", this.getDistance())).append(" km").append("\n");
         sb.append("Costo de envio: ")
-                .append(String.format("%.2f", this.getDeliveryCost(bussines))).append(" pesos.").append("\n");
+                .append(String.format("%.2f", this.getDeliveryCost(contract))).append(" pesos.").append("\n");
 
         return sb.toString();
     }

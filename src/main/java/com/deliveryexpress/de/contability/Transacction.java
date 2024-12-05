@@ -8,6 +8,7 @@ import com.deliveryexpress.utils.DateUtils;
 import com.deliveryexpress.utils.Utils;
 import com.j256.ormlite.field.DatabaseField;
 import com.monge.xsqlite.xsqlite.BaseDao;
+import java.util.UUID;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -32,6 +33,7 @@ public class Transacction extends BaseDao {
     String date;
 
     public Transacction() {
+        this.id = UUID.randomUUID().toString();
         this.date = DateUtils.getNowDate();
     }
 

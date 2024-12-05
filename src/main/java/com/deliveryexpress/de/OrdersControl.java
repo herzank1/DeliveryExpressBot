@@ -66,13 +66,15 @@ public class OrdersControl {
 
         currentOrders.add(o1);
 
+        sendOrderToItsDeliveriesGroup(o1);
+
         for (int i = 0; i < 10; i++) {
             Order o2 = new Order(bussines, false);
             o2.setCustomer(customer2);
             o2.setPreparationTimeMinutes(20);
-            o2.setOrderCost(100+new Random().nextInt(401));
+            o2.setOrderCost(100 + new Random().nextInt(401));
             o2.setDeliveryCost(150);
-            currentOrders.add(o2);
+            addNewOrder(o2);
         }
     }
 
@@ -82,6 +84,15 @@ public class OrdersControl {
 
     public static void onNewOrderReceivedEvent(Order order) {
 
+    }
+
+    /***
+     * Envia una orden al grupo secundario de repartidores
+     * @param o 
+     */
+    public static void sendOrderToItsDeliveriesGroup(Order o) {
+        Response.sendMessage(o.getArea().getDeliveriesGroup().getReceptor(), o.toTelegramStringBeforeTake(),
+                new MessageMenu("✅ Aceptar", "/take&" + o.getId()));
     }
 
     public static void onNewOrderAsignedEvent(Order order) {
@@ -103,7 +114,8 @@ public class OrdersControl {
 
     private static void onOrderDelivered(Order order) {
 
-        //order.getStorableOrder().create();
+        order.getStorableOrder().create();
+        order.getBusssines().getContract().executeOnOrderDelivered(order);
     }
 
     private static void startCountDown(Response response, Order o) {
@@ -452,11 +464,15 @@ public class OrdersControl {
      */
     public static boolean deliveryManTakeOrder(Order o, DeliveryMan deliveryMan) {
 
-        o.setDeliveryMan(deliveryMan);
-        o.setConfirmTake(true);
-        o.setWaitingDeliveryConfirmation(false);
+        if (o.getDeliveryMan() == null||o.getDeliveryMan()==deliveryMan) {
+            o.setDeliveryMan(deliveryMan);
+            o.setConfirmTake(true);
+            o.setWaitingDeliveryConfirmation(false);
 
-        return true;
+            return true;
+        } else {
+            return false;
+        }
 
     }
 

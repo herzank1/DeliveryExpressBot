@@ -4,6 +4,8 @@
  */
 package com.deliveryexpress.objects.users;
 
+import com.deliveryexpress.de.contability.BalanceAccount;
+import com.deliveryexpress.de.contability.BussinesContract;
 import com.deliveryexpress.objects.GroupArea;
 import com.j256.ormlite.field.DatabaseField;
 import com.monge.tbotboot.messenger.MessageMenu;
@@ -72,9 +74,13 @@ public class Bussines extends BaseDao {
         return menu;
 
     }
+    
+    public BalanceAccount getBalanceAccount() {
+        return BalanceAccount.read(BalanceAccount.class, this.balanceAccountNumber);
+    }
 
     public GroupArea getGrouArea() {
-        GroupArea read = GroupArea.read(this.getClass(), this.areaId);
+        GroupArea read = GroupArea.read(GroupArea.class, this.areaId);
         return read;
 
     }
@@ -89,6 +95,7 @@ public class Bussines extends BaseDao {
         BussinesContract read = BussinesContract.read(BussinesContract.class, this.contractId);
         if (read == null) {
             read = new BussinesContract();
+            read.setBalanceAccountId(this.getBalanceAccountNumber());
             this.setContractId(read.getId());
             this.update();
             read.create();
@@ -96,6 +103,19 @@ public class Bussines extends BaseDao {
 
         return read;
 
+    }
+
+    public String toStringForTelegram() {
+        return "🆔 Telegram ID: " + telegramId + "\n"
+                + "💳 Account ID: " + accountId + "\n"
+                + "👤 Name: " + name + "\n"
+                + "📞 Phone: " + phone + "\n"
+                + "🏠 Address: " + address + "\n"
+                + "📍 Location: " + location + "\n"
+                + "🏦 Balance Account Number: " + balanceAccountNumber + "\n"
+                + "🔓 Account Status: " + accountStatus + "\n"
+                + "🌍 Area ID: " + areaId + "\n"
+                + "📝 Contract ID: " + contractId;
     }
 
 }

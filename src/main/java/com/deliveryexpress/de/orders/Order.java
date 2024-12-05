@@ -11,6 +11,7 @@ import com.deliveryexpress.objects.users.Customer;
 import com.deliveryexpress.objects.users.DeliveryMan;
 import com.deliveryexpress.utils.DateUtils;
 import com.deliveryexpress.utils.Utils;
+import com.monge.tbotboot.messenger.builders.HtmlStringBuilder;
 import java.util.ArrayList;
 import java.util.UUID;
 import lombok.Data;
@@ -68,10 +69,10 @@ public class Order {
     public GroupArea getArea() {
         return this.getBusssines().getGrouArea();
     }
-    
-     public StorableOrder getStorableOrder() {
-     return new StorableOrder(this);
-     }
+
+    public StorableOrder getStorableOrder() {
+        return new StorableOrder(this);
+    }
 
     public boolean deliveryIsNearFromBussines() {
 
@@ -137,8 +138,8 @@ public class Order {
     }
 
     public String toTelegramStringForMod() {
-   
-                StringBuilder sb = new StringBuilder();
+
+        StringBuilder sb = new StringBuilder();
         sb.append("🆔 Id: " + this.getId()).append("\n");
         sb.append("📅 Fecha: " + this.creationDate).append("\n");
         sb.append("📌 Estado: " + this.status).append("\n");
@@ -160,20 +161,109 @@ public class Order {
             sb.append("🚚 Repartidor: " + this.deliveryMan.getName()).append("\n");
             sb.append("📞 Teléfono: " + this.deliveryMan.getPhone()).append("\n")
                     .append("\n");
-            
+
         }
 
         sb.append("💵 Costo de orden: " + this.orderCost).append("\n");
         sb.append("🚚 Costo de envío: " + this.deliveryCost).append("\n");
         sb.append("💰 Total a cobrar: " + this.getTotal()).append("\n")
                 .append("\n");
-        
-        sb.append("Log\n"+String.join("\n", this.logs));
+
+        sb.append("Log\n" + String.join("\n", this.logs));
+
+        return sb.toString();
+
+    }
+
+    public String toTelegramStringAfterTaken() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("🆔 " + this.getShortId()).append("\n");
+        sb.append("📅 " + this.creationDate).append("\n");
+        sb.append("📌 " + this.status).append("\n")
+                .append("\n");
+
+        sb.append("🏢 " + this.busssines.getName()).append("\n")
+                .append("\n");
+
+        if (this.deliveryMan != null) {
+            sb.append("🚚 " + this.deliveryMan.getName()).append("\n")
+                    .append("\n");
+        }
+
+        sb.append("💵: " + this.orderCost).append("\n");
+        sb.append("🚚: " + this.deliveryCost).append("\n");
+
+        return sb.toString();
+
+    }
+
+    public String toTelegramStringBeforeTake() {
+    
+                StringBuilder sb = new StringBuilder();
+        sb.append("🆔 Id: " + this.getShortId()).append("\n");
+        sb.append("📅 Fecha: " + this.creationDate).append("\n");
+        sb.append("📌 Estado: " + this.status).append("\n");
+        sb.append("⏱️ Preparación en: " + this.preparationTimeMinutes + " min.").append("\n")
+                .append("\n");
+
+        sb.append("🏢 Negocio: " + this.busssines.getName()).append("\n");
+        sb.append("📍 Dirección: " + this.busssines.getAddress()).append("\n")
+                .append("\n");
+
+        sb.append("👤 Cliente: " + this.customer.getName()).append("\n");
+        sb.append("📍 Dirección: " + this.customer.getLastAddress()).append("\n")
+                .append("\n");
+
+        if (this.deliveryMan != null) {
+            sb.append("🚚 Repartidor: " + this.deliveryMan.getName()).append("\n")
+                    .append("\n");
+        }
+
+        sb.append("💵 Costo de orden: " + this.orderCost).append("\n");
+        sb.append("🚚 Costo de envío: " + this.deliveryCost).append("\n");
+        sb.append("💰 Total a cobrar: " + this.getTotal()).append("\n");
 
         return sb.toString();
     
     }
+    
+        public String toTelegramStringForModHtml() {
 
-   
+        HtmlStringBuilder sb = new HtmlStringBuilder();
+        sb.appendBold("🆔 Id: " + this.getId()).appendNewline();
+        sb.append("📅 Fecha: " + this.creationDate).appendNewline();
+        sb.append("📌 Estado: " + this.status).appendNewline();
+        sb.append("⏱️ Preparación en: " + this.preparationTimeMinutes + " min.").appendNewline()
+                .append("\n");
+
+        sb.appendBold("🏢 Negocio: ").appendUserMention(this.busssines.getName(), this.busssines.getTelegramId()).appendNewline();
+        sb.append("📞 Teléfono: " + this.busssines.getPhone()).appendNewline();
+        sb.append("📍 Dirección: " + this.busssines.getAddress()).appendNewline()
+                .appendNewline();
+
+        sb.appendBold("👤 Cliente: " + this.customer.getName()).appendNewline();
+        sb.append("📞 Teléfono: " + this.customer.getPhone()).appendNewline();
+        sb.append("📍 Dirección: " + this.customer.getLastAddress()).appendNewline();
+        sb.appendUnderline("📝 Nota: " + this.customer.getLastNote()).appendNewline()
+                .append("\n");
+
+        if (this.deliveryMan != null) {
+            sb.appendBold("🚚 Repartidor: ").appendUserMention( this.deliveryMan.getName(),this.deliveryMan.getTelegramId()).appendNewline();
+            sb.append("📞 Teléfono: " + this.deliveryMan.getPhone()).appendNewline()
+                    .appendNewline();
+
+        }
+
+        sb.append("💵 Costo de orden: " + this.orderCost).appendNewline();
+        sb.append("🚚 Costo de envío: " + this.deliveryCost).appendNewline();
+        sb.appendBold("💰 Total a cobrar: " + this.getTotal()).appendNewline()
+               .appendNewline();
+
+        sb.appendNewline().append("Log").appendNewline().append(String.join("\n", this.logs));
+
+        return sb.build();
+
+    }
 
 }
