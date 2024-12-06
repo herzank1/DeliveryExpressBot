@@ -11,6 +11,7 @@ import com.deliveryexpress.objects.users.AccountStatus;
 import com.deliveryexpress.objects.users.DeliveryMan;
 import com.deliveryexpress.objects.users.Moderator;
 import com.deliveryexpress.objects.users.Tuser;
+import com.deliveryexpress.utils.DateUtils;
 import com.monge.tbotboot.commands.Command;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.Response;
@@ -40,6 +41,13 @@ class GroupDeliveryManCommands {
                 Response.sendMessage(group.getReceptor(), "Tu cuenta esta Inactiva!", null);
                 return;
 
+            }
+
+            if (xupdate.hasLocation()) {
+                DeliveryMan get = OrdersControl.getDeliveries().get(delivery.getAccountId());
+                get.setLocation(xupdate.getLocation().toString());
+                get.setLastLocationUpdate(DateUtils.getUnixTimeStamp());
+                return;
             }
 
             Command command = xupdate.getCommand();

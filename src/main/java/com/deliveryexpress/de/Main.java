@@ -6,6 +6,7 @@ package com.deliveryexpress.de;
 import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.objects.users.DBot;
 import com.deliveryexpress.telegram.UsersController;
+import com.deliveryexpress.utils.JsonStorable;
 import com.deliveryexpress.utils.Settings;
 import com.monge.tbotboot.messenger.Bot;
 import com.monge.tbotboot.messenger.BotsHandler;
@@ -18,9 +19,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Settings.cargar();
-        /*Cargamos variables*/
-        Global.load();
+
+        Global.getInstance();
         /*Iniciamos la base de datos*/
         DataBase.init();
         /*Cargamos los bots e iniciamos el mensajero executor*/

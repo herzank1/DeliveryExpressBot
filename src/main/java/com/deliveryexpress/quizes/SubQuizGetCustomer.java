@@ -191,7 +191,7 @@ public class SubQuizGetCustomer extends Quiz {
          BussinesContract contract = this.parent.order.getBusssines().getContract();
         try{
          cotization = new Cotization(
-                  Global.Global().city,getBussines().getAddress(), this.customer.getLastAddress());
+                  Global.getInstance().getOrdersConfig() .getCity(),getBussines().getAddress(), this.customer.getLastAddress());
 
         
         this.deliveryCost = cotization.getDeliveryCost(contract);

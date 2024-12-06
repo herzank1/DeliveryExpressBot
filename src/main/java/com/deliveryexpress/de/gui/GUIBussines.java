@@ -63,7 +63,7 @@ public class GUIBussines extends GuiItem {
                     current = Bussines.read(Bussines.class, value);
                     if (current == null) {
                         System.out.println("value " + value);
-                        botoomMsg = "no se encontro este repartidor, intente de nuevo";
+                        botoomMsg = "no se encontro este negocio, intente de nuevo";
                     } else {
                         botoomMsg = "";
                     }

@@ -9,6 +9,7 @@ import com.deliveryexpress.de.contability.BalanceAccount;
 import com.deliveryexpress.de.contability.Payment;
 import com.deliveryexpress.de.database.DataBase;
 import com.deliveryexpress.de.gui.GUIScreenAccounts;
+import com.deliveryexpress.de.gui.GUIScreenConfig;
 import com.deliveryexpress.de.gui.GUIScreenGroups;
 import com.deliveryexpress.de.orders.Order;
 import com.deliveryexpress.de.orders.OrderStatus;
@@ -68,6 +69,12 @@ public class ModeratorCommands {
 
             case "/areas":
                 QuizesControl.add(new GUIScreenGroups(xupdate.getSenderId()));
+                QuizesControl.execute(xupdate);
+
+                break;
+
+            case "/config":
+                QuizesControl.add(new GUIScreenConfig(xupdate.getSenderId()));
                 QuizesControl.execute(xupdate);
 
                 break;
@@ -137,7 +144,7 @@ public class ModeratorCommands {
                             case Payment.Status.APROVED:
                                 pay.aprove();
                                 Response.sendMessage(pay.getReceptor(), "Tu pago ha sido aprovado!"
-                                        +"\n"+pay.toStringForTelegram(), MessageMenu.okAndDeleteMessage());
+                                        + "\n" + pay.toStringForTelegram(), MessageMenu.okAndDeleteMessage());
                                 break;
 
                             case Payment.Status.REJECT:
@@ -164,7 +171,20 @@ public class ModeratorCommands {
                             null);
 
                     break;
+
                 }
+
+                break;
+
+            case "/sendtoext":
+
+                orderId = command.getParam(1);
+                o = OrdersControl.getOrder(orderId);
+                if (o != null) {
+                    OrdersControl.sendOrderToItsDeliveriesGroup(o);
+                }
+
+                break;
 
         }
     }
@@ -195,9 +215,12 @@ public class ModeratorCommands {
 
         if (o.getDeliveryMan() != null) {
             menu.addUrlButton("🚚 Ubicacion", o.getDeliveryMan().getPosition().getUrlGoogleMapsMark());
+        }else{
+        menu.addButton("Enviar a ext", "/sendtoext&" + o.getId());
         }
 
         menu.addButton("🚚 Asignar", "/asigndelivery&" + o.getId());
+        
 
         menu.newLine();
         menu.addBackButton("/myorders");
@@ -235,6 +258,7 @@ public class ModeratorCommands {
         menu.addButton("🕰 Historial (Hoy)", "/mytodayhistory", true);
         menu.addButton("💻 Cuentas", "/accounts", true);
         menu.addButton("💻 Grupos y areas", "/areas", true);
+        menu.addButton("💻 Configuracion", "/config", true);
         menu.addButton("💳 Mi cartera", "/accounts", true);
         menu.addButton("♻ Actualizar", "/menu", true);
 

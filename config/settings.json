@@ -1,0 +1,23 @@
+{
+  "_fileName": "settings",
+  "ordersConfig": {
+    "city": "Mexicali B,C.",
+    "checkDeliveryPositionOnChangeStatus": false,
+    "execed_delivery_distance": 10.0,
+    "delivery_max_order_count": 2,
+    "manual_order_only": false,
+    "request_delivery_location": false,
+    "dinamic_rate": 1.0
+  },
+  "enterprise": {
+    "system_name": "Delivery Express System",
+    "bussines_name": "DeliveryExpress",
+    "email": "diego.villarreal.monge@gmail.com",
+    "phone": "6863095448"
+  },
+  "systemUsers": {
+    "bussines_name": "Delivery Express Bot",
+    "max_users_transacctions_view": 10,
+    "phone": "6863095448"
+  }
+}

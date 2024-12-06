@@ -26,6 +26,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +38,6 @@ public class OrdersControl {
 
     public static List<Order> currentOrders = new ArrayList<>();
     static Map<String, DeliveryMan> deliveries;
-    public static boolean checkDeliveryPositionOnChangeStatus = false;
 
     public static void init() {
         deliveries = DataBase.Accounts.Deliveries.Deliveries().getCache();
@@ -68,7 +69,7 @@ public class OrdersControl {
 
         sendOrderToItsDeliveriesGroup(o1);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             Order o2 = new Order(bussines, false);
             o2.setCustomer(customer2);
             o2.setPreparationTimeMinutes(20);
@@ -86,9 +87,11 @@ public class OrdersControl {
 
     }
 
-    /***
+    /**
+     * *
      * Envia una orden al grupo secundario de repartidores
-     * @param o 
+     *
+     * @param o
      */
     public static void sendOrderToItsDeliveriesGroup(Order o) {
         Response.sendMessage(o.getArea().getDeliveriesGroup().getReceptor(), o.toTelegramStringBeforeTake(),
@@ -464,7 +467,7 @@ public class OrdersControl {
      */
     public static boolean deliveryManTakeOrder(Order o, DeliveryMan deliveryMan) {
 
-        if (o.getDeliveryMan() == null||o.getDeliveryMan()==deliveryMan) {
+        if (o.getDeliveryMan() == null || o.getDeliveryMan() == deliveryMan) {
             o.setDeliveryMan(deliveryMan);
             o.setConfirmTake(true);
             o.setWaitingDeliveryConfirmation(false);
@@ -491,6 +494,28 @@ public class OrdersControl {
         o.getRejectedList().add(deliveryMan.getAccountId());
 
         return true;
+    }
+
+    public static Order extractAndGetOrderFromText(String text) {
+        String regex = "Id: (\\w+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+
+        if (matcher.find()) {
+            String id = matcher.group(1);
+            for (Order o : currentOrders) {
+                if (o.getShortId().equals(id)) {
+                    return o;
+                }
+            }
+
+        } else {
+            return null;
+
+        }
+        
+        return null;
+
     }
 
 }

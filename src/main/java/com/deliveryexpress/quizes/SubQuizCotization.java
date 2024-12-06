@@ -194,7 +194,8 @@ public class SubQuizCotization extends Quiz {
         BussinesContract contract = this.parent.order.getBusssines().getContract();
 
         cotization = new Cotization(
-                getBussines().getAddress(), customer.getLastAddress(),Global.Global().city);
+                getBussines().getAddress(), customer.getLastAddress()
+                ,Global.getInstance().getOrdersConfig() .getCity());
 
         this.deliveryCost = cotization.getDeliveryCost(contract);
 

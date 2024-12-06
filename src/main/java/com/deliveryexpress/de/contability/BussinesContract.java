@@ -190,20 +190,20 @@ public class BussinesContract extends BaseDao {
     }
     
     public String toStringForTelegram() {
-    return "🆔 *ID del Servicio:* " + id + "\n"
-            + "🛠️ *Tipo de Servicio:* " + serviceType + "\n"
-            + "💰 *Costo del Servicio:* " + String.format("%.2f", serviceCost) + " USD\n"
-            + "📏 *Costo Base por KM:* " + String.format("%.2f", kmBaseCost) + " USD\n"
-            + "➕ *Costo Extra por KM:* " + String.format("%.2f", kmExtraCost) + " USD\n"
-            + "🚦 *Kilómetros Base (Banderazo):* " + kmBase + " km\n"
-            + "💳 *Paga Cuota:* " + (payCuota ? "Sí" : "No") + "\n"
-            + "💸 *Monto de Cuota:* " + String.format("%.2f", payCuotaMount) + " USD\n"
-            + "👤 *Propietario:* " + ownerName + "\n"
-            + "📆 *Horario:* " + schedule + "\n"
-            + "🏦 *ID de Cuenta de Balance:* " + balanceAccountId + "\n"
-            + "📉 *Límite Máximo de Deuda:* " + String.format("%.2f", maxDebLimit) + " USD\n"
-            + "🏷️ *Etiquetas:* " + tags;
+    return "🆔 ID del Servicio: " + id + "\n"
+            + "🛠️ Tipo de Servicio:*" + serviceType + "\n"
+            + "💰 Costo del Servicio: " + String.format("%.2f", serviceCost) + " MXN\n"
+            + "📏 Costo Base por KM: " + String.format("%.2f", kmBaseCost) + " MXN\n"
+            + "➕ Costo Extra por KM: " + String.format("%.2f", kmExtraCost) + " MXN\n"
+            + "🚦 Kilómetros Base (Banderazo): " + kmBase + " km\n"
+            + "💳 Paga Cuota: " + (payCuota ? "Sí" : "No") + "\n"
+            + "💸 Monto de Cuota: " + String.format("%.2f", payCuotaMount) + " MXN\n"
+            + "👤 Propietario: " + ownerName + "\n"
+            + "📆 Horario: " + schedule + "\n"
+            + "🏦 ID de Cuenta de Balance: " + balanceAccountId + "\n"
+            + "📉 Límite Máximo de Deuda: " + String.format("%.2f", maxDebLimit) + " MXN\n"
+            + "🏷️ Etiquetas: " + tags;
 }
-
+    
 
 }

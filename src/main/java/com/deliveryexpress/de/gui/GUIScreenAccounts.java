@@ -26,7 +26,15 @@ public class GUIScreenAccounts extends Quiz {
 
         mainMenu.addItem(new GUITuser(null, "Users"));
         mainMenu.addItem(new GUIDeliverys(null, "Repartidores"));
-        mainMenu.addItem(new GUIBussines(null, "Negocios"));
+        
+        GuiMenu bussinesMenu = new GuiMenu(null, "Accounts");
+        bussinesMenu.addItem(new GUIBussines(null, "Negocios"));
+        bussinesMenu.addItem(new GUIBussinesContracts(null, "Contratos"));
+        
+        mainMenu.addItem(bussinesMenu);
+        
+        
+        
         mainMenu.addItem(new GUIModerators(null, "Moderadores"));
 
         screen = new GuiScreen(mainMenu);

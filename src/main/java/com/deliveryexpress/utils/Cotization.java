@@ -89,12 +89,12 @@ public class Cotization {
         sum = kmBaseCost + (kmsExtras * kmExtraCost);
 
         if (this.getDistance() > 10) {
-            sum += Global.Global().execed_delivery_distance;
+            sum += Global.getInstance().getOrdersConfig() .getExeced_delivery_distance();
         } else if (this.getDistance() > 20) {
-            sum += Global.Global().execed_delivery_distance;
+            sum += Global.getInstance().getOrdersConfig() .getExeced_delivery_distance();
         }
 
-        return sum * Global.Global().dinamic_rate;
+        return sum * Global.getInstance().getOrdersConfig() .getDinamic_rate();
 
     }
 

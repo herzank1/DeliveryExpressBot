@@ -4,6 +4,7 @@
  */
 package com.deliveryexpress.de.orders;
 
+import com.deliveryexpress.de.Global;
 import com.deliveryexpress.de.OrdersControl;
 import com.deliveryexpress.objects.GroupArea;
 import com.deliveryexpress.objects.users.Bussines;
@@ -76,7 +77,7 @@ public class Order {
 
     public boolean deliveryIsNearFromBussines() {
 
-        if (!OrdersControl.checkDeliveryPositionOnChangeStatus) {
+        if (!Global.getInstance().getOrdersConfig()  .isCheckDeliveryPositionOnChangeStatus()) {
             return true;
         }
 
@@ -91,7 +92,7 @@ public class Order {
     }
 
     public boolean deliveryIsNearFromCustomer() {
-        if (!OrdersControl.checkDeliveryPositionOnChangeStatus) {
+        if (!Global.getInstance().getOrdersConfig() .isCheckDeliveryPositionOnChangeStatus()) {
             return true;
         }
 

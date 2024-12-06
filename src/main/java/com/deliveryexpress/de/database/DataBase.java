@@ -57,6 +57,8 @@ public class DataBase {
         );
 
         System.out.println("success!");
+        
+        
 
     }
 
@@ -100,7 +102,7 @@ public class DataBase {
 
         public static GenericDao<Tuser, String> TelegramUsers() {
 
-            return ConnectionPoolManager.getDato(Tuser.class);
+            return ConnectionPoolManager.getDao(Tuser.class);
 
         }
 
@@ -108,7 +110,7 @@ public class DataBase {
 
             public static GenericDao<DeliveryMan, String> Deliveries() {
 
-                return ConnectionPoolManager.getDato(DeliveryMan.class);
+                return ConnectionPoolManager.getDao(DeliveryMan.class);
 
             }
         }
@@ -117,7 +119,7 @@ public class DataBase {
 
             public static GenericDao<Moderator, String> Moderators() {
 
-                return ConnectionPoolManager.getDato(Moderator.class);
+                return ConnectionPoolManager.getDao(Moderator.class);
 
             }
 
@@ -146,72 +148,72 @@ public class DataBase {
             public static void createMainBalancesAccounts() {
 
                 /* Verificar y crear cuenta de Cargos */
-                BalanceAccount cargos = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.CARGO);
+                BalanceAccount cargos = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.CARGO);
                 if (cargos == null) {
                     cargos = new BalanceAccount(MainBalancesAccountsIDs.CARGO, 100f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cargos);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(cargos);
                 }
 
                 /* Verificar y crear cuenta principal */
-                BalanceAccount cuentaPrincipal = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.DELIVERY_EXPRESS);
+                BalanceAccount cuentaPrincipal = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.DELIVERY_EXPRESS);
                 if (cuentaPrincipal == null) {
                     cuentaPrincipal = new BalanceAccount(MainBalancesAccountsIDs.DELIVERY_EXPRESS, 100f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cuentaPrincipal);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(cuentaPrincipal);
                 }
 
                 /* Verificar y crear cuenta de Servicios Repartos */
-                BalanceAccount cuentaServiciosRepartos = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.SERVICIOS_REPARTOS);
+                BalanceAccount cuentaServiciosRepartos = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.SERVICIOS_REPARTOS);
                 if (cuentaServiciosRepartos == null) {
                     cuentaServiciosRepartos = new BalanceAccount(MainBalancesAccountsIDs.SERVICIOS_REPARTOS, 0f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cuentaServiciosRepartos);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(cuentaServiciosRepartos);
                 }
 
                 /* Verificar y crear cuenta de Seguros Órdenes */
-                BalanceAccount cuentaSegurosOrdenes = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.SERGUROS_ORDENES);
+                BalanceAccount cuentaSegurosOrdenes = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.SERGUROS_ORDENES);
                 if (cuentaSegurosOrdenes == null) {
                     cuentaSegurosOrdenes = new BalanceAccount(MainBalancesAccountsIDs.SERGUROS_ORDENES, 0f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cuentaSegurosOrdenes);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(cuentaSegurosOrdenes);
                 }
 
                 /* Verificar y crear cuenta de Seguros Repartidores */
-                BalanceAccount cuentaSegurosRepartidores = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.SEGUROS_REPARTIDORES);
+                BalanceAccount cuentaSegurosRepartidores = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.SEGUROS_REPARTIDORES);
                 if (cuentaSegurosRepartidores == null) {
                     cuentaSegurosRepartidores = new BalanceAccount(MainBalancesAccountsIDs.SEGUROS_REPARTIDORES, 0f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cuentaSegurosRepartidores);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(cuentaSegurosRepartidores);
                 }
 
                 /* Verificar y crear cuenta de Caja Chica */
-                BalanceAccount cajachica = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.CAJA_CHICA);
+                BalanceAccount cajachica = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.CAJA_CHICA);
                 if (cajachica == null) {
                     cajachica = new BalanceAccount(MainBalancesAccountsIDs.CAJA_CHICA, 0f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cajachica);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(cajachica);
                 }
 
                 /* Verificar y crear cuenta de Emergencias */
-                BalanceAccount emergencias = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.EMERGENCIAS);
+                BalanceAccount emergencias = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.EMERGENCIAS);
                 if (emergencias == null) {
                     emergencias = new BalanceAccount(MainBalancesAccountsIDs.EMERGENCIAS, 0f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(emergencias);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(emergencias);
                 }
 
                 /* Verificar y crear cuenta de Cuotas Repartidores */
-                BalanceAccount cuotasRepas = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.CUOTAS_REPARTIDORES);
+                BalanceAccount cuotasRepas = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.CUOTAS_REPARTIDORES);
                 if (cuotasRepas == null) {
                     cuotasRepas = new BalanceAccount(MainBalancesAccountsIDs.CUOTAS_REPARTIDORES, 0f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cuotasRepas);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(cuotasRepas);
                 }
 
                 /* Verificar y crear cuenta de Cuotas Negocios */
-                BalanceAccount cuotasBussines = (BalanceAccount) ConnectionPoolManager.getDato(BalanceAccount.class).read(MainBalancesAccountsIDs.CUOTAS_NEGOCIOS);
+                BalanceAccount cuotasBussines = (BalanceAccount) ConnectionPoolManager.getDao(BalanceAccount.class).read(MainBalancesAccountsIDs.CUOTAS_NEGOCIOS);
                 if (cuotasBussines == null) {
                     cuotasBussines = new BalanceAccount(MainBalancesAccountsIDs.CUOTAS_NEGOCIOS, 0f);
-                    ConnectionPoolManager.getDato(BalanceAccount.class).create(cuotasBussines);
+                    ConnectionPoolManager.getDao(BalanceAccount.class).create(cuotasBussines);
                 }
             }
 
             public static GenericDao<BalanceAccount, String> BalancesAccounts() {
 
-                return ConnectionPoolManager.getDato(BalanceAccount.class);
+                return ConnectionPoolManager.getDao(BalanceAccount.class);
 
             }
 
@@ -221,7 +223,7 @@ public class DataBase {
 
             public static GenericDao<Transacction, String> Transacctions() {
 
-                return ConnectionPoolManager.getDato(Transacction.class);
+                return ConnectionPoolManager.getDao(Transacction.class);
 
             }
 
@@ -264,7 +266,7 @@ public class DataBase {
 
             public static GenericDao<StorableOrder, String> Orders() {
 
-                return ConnectionPoolManager.getDato(StorableOrder.class);
+                return ConnectionPoolManager.getDao(StorableOrder.class);
 
             }
         }
