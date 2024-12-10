@@ -9,6 +9,8 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.GeocodingApiRequest;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -102,5 +104,34 @@ public class GoogleMapsUtils {
             }
             return formattedAddress;
         }
+        
+            /**
+     * Realiza una solicitud a la Google Maps Geocoding API para obtener direcciones
+     * relacionadas con el parámetro de búsqueda y devuelve una lista de direcciones
+     * encontradas.
+     * 
+     * @param searchQuery Parámetro de búsqueda para realizar la solicitud
+     * @return ArrayList con las direcciones encontradas
+     */
+    public static List<String> fetchGeocodingResults(String searchQuery) {
+        List<String> resultList = new ArrayList<>();
+        try {
+            GeoApiContext context = getContext();
+            
+            // Realizar la solicitud usando la API Geocoding
+            GeocodingResult[] geocodingResults = GeocodingApi.geocode(context, searchQuery).await();
+            
+            // Recorrer los resultados y agregar las direcciones al ArrayList
+            for (GeocodingResult result : geocodingResults) {
+                resultList.add(result.formattedAddress);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error al realizar la solicitud a la API de Google Maps: " + e.getMessage());
+        }
+
+        return resultList;
+    }
 
 }

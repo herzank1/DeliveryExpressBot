@@ -4,6 +4,7 @@
  */
 package com.deliveryexpress.objects.users;
 
+import com.deliveryexpress.de.contability.BalanceAccount;
 import com.j256.ormlite.field.DatabaseField;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.UUID;
@@ -43,6 +44,19 @@ public class Moderator extends BaseDao {
         this.name = name;
         this.phone = phone;
     }
+    
+      public BalanceAccount getBalanceAccount() {
+        BalanceAccount read = BalanceAccount.read(BalanceAccount.class, this.balanceAccountNumber);
+        if (read == null) {
+            read = new BalanceAccount();
+            read.create();
+            this.setBalanceAccountNumber(read.getAccountNumber());
+            this.update();
+        }
+
+        return read;
+    }
+
 
     public String toStringForTelegram() {
         return "🆔 Telegram ID: " + telegramId + "\n"

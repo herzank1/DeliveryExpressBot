@@ -4,6 +4,7 @@
  */
 package com.deliveryexpress.telegram;
 
+import com.deliveryexpress.de.Global;
 import com.deliveryexpress.de.OrdersControl;
 import com.deliveryexpress.de.contability.BalanceAccount;
 import com.deliveryexpress.de.contability.BussinesContract;
@@ -66,7 +67,7 @@ public class BussinesCommands {
                 Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(),
                         bussines.getName()
                         + "\nID: " + user.getId()
-                        + "\nCartera: " + read.getBalance() + "$", getMenu());
+                        + "\nCartera: " + read.getBalance() + "$", getMenu(bussines));
 
                 break;
 
@@ -180,8 +181,8 @@ public class BussinesCommands {
                 Response.sendMessage(xupdate.getTelegramUser(), paymentMessage
                         + "\n una vez realizado el pago, envie captura "
                         + "con el siguiente texto: pago cantidad-enviada"
-                                + "\n\n ejemplo: pago 500 (sin simbolos ni puntos.)"
-                                + " si la cantidad no coincide con la captura, sera rechazada.", MessageMenu.okAndDeleteMessage());
+                        + "\n\n ejemplo: pago 500 (sin simbolos ni puntos.)"
+                        + " si la cantidad no coincide con la captura, sera rechazada.", MessageMenu.okAndDeleteMessage());
 
                 break;
 
@@ -204,20 +205,19 @@ public class BussinesCommands {
             if (xupdate.getFile() != null && xupdate.getFile().getType().equals(FileType.IMAGE)) {
 
                 System.out.println("Imagen recibida!");
-                
+
                 String[] split = xupdate.getText().split(" ");
                 switch (split[0]) {
 
-                    
                     case "Pago":
                     case "pago":
                         /*extraemos la cantidad*/
-                        int qty = Integer.parseInt(split[1]) ;
+                        int qty = Integer.parseInt(split[1]);
 
                         TelegramFile file = xupdate.getFile();
                         boolean download = file.download();
                         if (download) {
-                            
+
                             System.out.println("Imagen descargada!");
 
                             GroupArea grouArea = bussines.getGrouArea();
@@ -226,23 +226,23 @@ public class BussinesCommands {
                             pay.setImg(file.getData());
                             pay.setMetaData(new PaymentMetaData(xupdate.getSenderId()));
                             pay.create();
-                            
-                            System.out.println("Se creo un pago en revision "+pay.getReference());
+
+                            System.out.println("Se creo un pago en revision " + pay.getReference());
 
                             /*respondemos al usuario que envio*/
                             Response.sendMessage(xupdate.getTelegramUser(), "Se esta procesando su pago"
                                     + " esto puede demorar hasta 12h."
-                                    + " ID:"+pay.getId(), MessageMenu.okAndDeleteMessage());
+                                    + " ID:" + pay.getId(), MessageMenu.okAndDeleteMessage());
 
                             /*notificamos al admin del area*/
                             Tuser admin = Tuser.read(Tuser.class, grouArea.getAdminTelegramId());
                             MessageMenu menu = new MessageMenu();
-                            menu.addButton("✅ Aprovar", "/payment&"+Payment.Status.APROVED+"&"+pay.getId(), true);
-                            menu.addButton("❌ Rechazar", "/payment&"+Payment.Status.REJECT+"&"+pay.getId(), true);
+                            menu.addButton("✅ Aprovar", "/payment&" + Payment.Status.APROVED + "&" + pay.getId(), true);
+                            menu.addButton("❌ Rechazar", "/payment&" + Payment.Status.REJECT + "&" + pay.getId(), true);
                             System.out.println("Notificamos al moderador del area "
-                                    + "Area:"+grouArea.getId());
+                                    + "Area:" + grouArea.getId());
                             Methods.sendLocalPhoto(admin.getReceptor(), file.getData(), pay.toStringForTelegram(),
-                                     menu);
+                                    menu);
 
                             break;
 
@@ -261,10 +261,16 @@ public class BussinesCommands {
 
     }
 
-    private static MessageMenu getMenu() {
+    private static MessageMenu getMenu(Bussines bussines) {
         MessageMenu menu = new MessageMenu();
 
+        if (Global.getInstance().getOrdersConfig().isAllowNewOrderTroughApp()) {
+            menu.addUrlButton("✳ Nueva Orden (APP)", "t.me/DE_MXL_1_BOT/deliveryexpress");
+            menu.addNewLine();
+        }
+
         menu.addButton("✳ Nueva Orden", "/new_order_atm", true);
+
         //menu.addButton("✳ Nueva Orden(ATM)", "/new_order_atm", true);
         //menu.addButton("✴️ Nueva Orden(Manual)", "/new_order_manual&2", true);
         menu.addButton("🛵 Cotizar envio(ATM)", "/cotaizer", true);

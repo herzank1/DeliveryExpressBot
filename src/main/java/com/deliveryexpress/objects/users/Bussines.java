@@ -75,9 +75,18 @@ public class Bussines extends BaseDao {
 
     }
     
-    public BalanceAccount getBalanceAccount() {
-        return BalanceAccount.read(BalanceAccount.class, this.balanceAccountNumber);
+      public BalanceAccount getBalanceAccount() {
+        BalanceAccount read = BalanceAccount.read(BalanceAccount.class, this.balanceAccountNumber);
+        if (read == null) {
+            read = new BalanceAccount();
+            read.create();
+            this.setBalanceAccountNumber(read.getAccountNumber());
+            this.update();
+        }
+
+        return read;
     }
+
 
     public GroupArea getGrouArea() {
         GroupArea read = GroupArea.read(GroupArea.class, this.areaId);

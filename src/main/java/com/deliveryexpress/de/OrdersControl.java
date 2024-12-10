@@ -15,6 +15,7 @@ import com.deliveryexpress.objects.users.Moderator;
 import com.deliveryexpress.objects.users.Tuser;
 import com.deliveryexpress.telegram.BussinesCommands;
 import com.deliveryexpress.telegram.DeliveryManCommands;
+import com.google.gson.GsonBuilder;
 import com.monge.tbotboot.messenger.MessageMenu;
 import com.monge.tbotboot.messenger.Response;
 import com.monge.tbotboot.messenger.ResponseAction;
@@ -67,8 +68,7 @@ public class OrdersControl {
 
         currentOrders.add(o1);
 
-        sendOrderToItsDeliveriesGroup(o1);
-
+        // sendOrderToItsDeliveriesGroup(o1);
         for (int i = 0; i < 2; i++) {
             Order o2 = new Order(bussines, false);
             o2.setCustomer(customer2);
@@ -240,7 +240,7 @@ public class OrdersControl {
             @Override
             public void run() {
                 System.out.println("Ordenes en curso: " + currentOrders.size());
-                System.out.println("Repartidores activos: " + deliveries.size());
+                System.out.println("Repartidores activos: " + getConnectedDeliveries().size());
 
                 ordersFor:
                 for (Order o : currentOrders) {
@@ -266,22 +266,33 @@ public class OrdersControl {
 
                     }
                 }
+                
+                System.out.println(new GsonBuilder()
+                        .setPrettyPrinting()
+                        .create()
+                        .toJson(Global.getInstance()
+                                .getLiveData()));
+
 
             }
+            
+            
         };
 
         timer.schedule(timerTask, 1000, 1000 * 30);
-
+        
+        
     }
 
-    private static ArrayList<DeliveryMan> getConnectedDeliveries() {
+    public static ArrayList<DeliveryMan> getConnectedDeliveries() {
 
         // Convertir a un ArrayList de DeliveryMan
         ArrayList<DeliveryMan> deliveryManList = new ArrayList<>();
         for (Map.Entry<String, DeliveryMan> entry : deliveries.entrySet()) {
-            // if(entry.getValue().isConnected()){
-            deliveryManList.add(entry.getValue());
-            //   }
+            DeliveryMan value = entry.getValue();
+            if (value.isConnected()) {
+                deliveryManList.add(entry.getValue());
+            }
 
         }
 
@@ -513,7 +524,7 @@ public class OrdersControl {
             return null;
 
         }
-        
+
         return null;
 
     }

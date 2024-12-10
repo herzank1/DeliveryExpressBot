@@ -11,11 +11,13 @@
         <maven.compiler.target>17</maven.compiler.target>
         <exec.mainClass>com.deliveryexpress.de.Main</exec.mainClass>
     </properties>
+   
     <dependencies>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.10.1</version>
+            <version>2.11.0</version> <!-- Cambia la versión si es necesario -->
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
@@ -41,48 +43,58 @@
             <scope>provided</scope>
         </dependency>
         
-         <dependency>    
+        <dependency>    
             <groupId>com.monge.xsqlite</groupId>
             <artifactId>XSQLite</artifactId>
             <version>1</version>
         </dependency>
         
-                 <dependency>
+        <dependency>
             <groupId>com.monge.tbotboot</groupId>
             <artifactId>TelegramBotFramework</artifactId>
             <version>1</version>
         </dependency>
         
-        
-    </dependencies>
-        
-
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.9</version>
+        </dependency>
     
-     <build>
-        <plugins>
-            <!-- any other plugins -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.deliveryexpress.de.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-            </plugin> 
-        </plugins>
-    </build>
+    </dependencies>
+<build>
+    <plugins>
+        <!-- Maven Assembly Plugin -->
+            <!-- Maven Jar Plugin: Crea el JAR del código principal sin dependencias -->
+        <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>com.deliveryexpress.de.Main</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+
+        <!-- Maven Dependency Plugin -->
+        <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        <includeScope>runtime</includeScope>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
 </project>

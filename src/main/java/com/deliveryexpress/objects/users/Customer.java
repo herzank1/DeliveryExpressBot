@@ -55,5 +55,14 @@ public class Customer extends BaseDao {
         }
 
     }
+    
+        public String toStringForTelegram() {
+        return 
+                "👤 Name: " + name + "\n"
+                + "📞 Phone: " + phone + "\n"
+                + "🏦 Direccion: " + lastAddress + "\n"
+                + "🌍 Locacion: " + lastLoction + "\n"
+                + "🏷️ Nota: " + lastNote;
+    }
 
 }

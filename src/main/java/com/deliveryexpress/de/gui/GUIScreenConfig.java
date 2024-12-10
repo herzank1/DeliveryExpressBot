@@ -5,117 +5,94 @@
 package com.deliveryexpress.de.gui;
 
 import com.deliveryexpress.de.Global;
-import com.deliveryexpress.de.OrdersControl;
+import com.monge.tbotboot.commands.Command;
 import com.monge.tbotboot.gui.GuiElement;
 import com.monge.tbotboot.gui.GuiItem;
 import com.monge.tbotboot.gui.GuiMenu;
-import com.monge.tbotboot.gui.GuiScreen;
 import com.monge.tbotboot.messenger.MessageMenu;
-import com.monge.tbotboot.messenger.Response;
 import com.monge.tbotboot.messenger.Xupdate;
-import com.monge.tbotboot.quizes.Quiz;
+import com.monge.tbotboot.quizes.QuizGui;
 
 /**
  *
  * @author DeliveryExpress
  */
-public class GUIScreenConfig extends Quiz {
+public class GUIScreenConfig extends QuizGui {
 
-    GuiScreen screen;
-    String screenMsgId;
-
-    public GUIScreenConfig(String userId) {
-        super(userId);
+    public GUIScreenConfig(Xupdate xupdate) {
+        super(xupdate.getTelegramUser());
 
         GuiMenu mainMenu = new GuiMenu(null, "Configuracion");
 
         mainMenu.addItem(new GUIConfigSystem(null, "Sistema"));
 
-        screen = new GuiScreen(mainMenu);
+        super.setMainMenu(mainMenu);
+    }
+
+}
+
+class GUIConfigSystem extends GuiItem {
+
+    public GUIConfigSystem(GuiElement parent, String text) {
+        super(parent, text);
+        super.setCommandSplitter("=");
     }
 
     @Override
     public void execute(Xupdate xupdate) {
 
-        switch (super.getStep()) {
+        Command command = new Command(xupdate.getText(), super.getCommandSplitter());
 
-            case 0:
-                Response sendMessage = Response.sendMessage(xupdate.getTelegramUser(), screen.draw(), screen.getMenu());
-                screenMsgId = sendMessage.getMessageId();
-                super.next();
-                break;
+        switch (command.command()) {
 
-            case 1:
-                screen.execute(xupdate.getText());
-
-                if (!xupdate.isCallBack()) {
-                    Response.deleteMessage(xupdate);
-                }
-
-                Response.editMessage(xupdate.getTelegramUser(), this.screenMsgId, screen.draw(), screen.getMenu());
+            /*setCheckDeliveryPositionOnChangeStatus*/
+            case "--cdpocs":
+                Global.getInstance()
+                        .getOrdersConfig()
+                        .setCheckDeliveryPositionOnChangeStatus(command.getParamAsBoolean(1));
 
                 break;
+            /*setDelivery_max_order_count*/
+            case "--dmod":
+                Global.getInstance()
+                        .getOrdersConfig()
+                        .setDelivery_max_order_count(command.getParamAsInteger(1));
+                break;
+            /*setDinamic_rate*/
+            case "--dr":
+                Global.getInstance()
+                        .getOrdersConfig()
+                        .setDinamic_rate(command.getParamAsInteger(1));
+                break;
 
+            /*setRequest_delivery_location*/
+            case "--rdl":
+                Global.getInstance()
+                        .getOrdersConfig()
+                        .setRequest_delivery_location(command.getParamAsBoolean(1));
+                break;
+
+            /*setManual_order_only*/
+            case "--moo":
+                Global.getInstance()
+                        .getOrdersConfig()
+                        .setManual_order_only(command.getParamAsBoolean(1));
+                break;
         }
 
     }
 
-    class GUIConfigSystem extends GuiItem {
-
-        public GUIConfigSystem(GuiElement parent, String text) {
-            super(parent, text);
-        }
-
-        @Override
-        public void execute(String data) {
-
-            String[] split = data.split("=");
-            String command = split[0].toLowerCase().replace(" ", "");
-
-            String value = "";
-            try {
-                value = split[1];
-            } catch (java.lang.IndexOutOfBoundsException e) {
-                /**/
-            }
-
-            switch (command) {
-
-                case "checkDeliveryPositionOnChangeStatus":
-                case "--cdpocs":
-                    Global.getInstance().getOrdersConfig() .setCheckDeliveryPositionOnChangeStatus(BooleanOf(value)) ;
-
-                    break;
-            }
-
-        }
-
-        @Override
-        public MessageMenu getMenu() {
-            return new MessageMenu();
-        }
-
-        @Override
-        public String draw() {
-
-            return "checkDeliveryPositionOnChangeStatus: " + Global.getInstance().getOrdersConfig() .isCheckDeliveryPositionOnChangeStatus();
-
-        }
-
-        private boolean BooleanOf(String input) {
-
-            if (input == null) {
-                return false; // Por defecto, null se considera false
-            }
-            // Convertimos el string a minúsculas y eliminamos espacios
-            input = input.trim().toLowerCase();
-            // Comprobamos las posibles entradas para true
-            return input.equals("true") || input.equals("1")
-                    || input.equals("s") || input.equals("y")
-                    || input.equals("yes") || input.equals("si");
-
-        }
-
+    @Override
+    public MessageMenu getMenu() {
+        return new MessageMenu();
     }
+
+    @Override
+    public String draw() {
+
+        return Global.getInstance().toStringForTelegram();
+                
+    }
+
 
 }

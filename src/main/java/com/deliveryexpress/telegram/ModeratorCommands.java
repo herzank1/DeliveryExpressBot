@@ -8,9 +8,11 @@ import com.deliveryexpress.de.OrdersControl;
 import com.deliveryexpress.de.contability.BalanceAccount;
 import com.deliveryexpress.de.contability.Payment;
 import com.deliveryexpress.de.database.DataBase;
-import com.deliveryexpress.de.gui.GUIScreenAccounts;
+import com.deliveryexpress.de.gui.CmdTool;
+import com.deliveryexpress.de.gui.accounts.GUIScreenAccounts;
 import com.deliveryexpress.de.gui.GUIScreenConfig;
-import com.deliveryexpress.de.gui.GUIScreenGroups;
+import com.deliveryexpress.de.gui.groupareas.GUIScreenGroups;
+import com.deliveryexpress.de.gui.wallets.GUIScreenWallets;
 import com.deliveryexpress.de.orders.Order;
 import com.deliveryexpress.de.orders.OrderStatus;
 import com.deliveryexpress.objects.users.AccountStatus;
@@ -62,22 +64,34 @@ public class ModeratorCommands {
                 break;
 
             case "/accounts":
-                QuizesControl.add(new GUIScreenAccounts(xupdate.getSenderId()));
+                QuizesControl.add(new GUIScreenAccounts(xupdate));
                 QuizesControl.execute(xupdate);
 
                 break;
 
             case "/areas":
-                QuizesControl.add(new GUIScreenGroups(xupdate.getSenderId()));
+                QuizesControl.add(new GUIScreenGroups(xupdate));
                 QuizesControl.execute(xupdate);
 
                 break;
 
             case "/config":
-                QuizesControl.add(new GUIScreenConfig(xupdate.getSenderId()));
+                QuizesControl.add(new GUIScreenConfig(xupdate));
                 QuizesControl.execute(xupdate);
 
                 break;
+                
+            case "/cmd":
+                QuizesControl.add(new CmdTool(xupdate));
+                QuizesControl.execute(xupdate);
+
+                break;    
+                
+              case "/wallets":
+                QuizesControl.add(new GUIScreenWallets(xupdate));
+                QuizesControl.execute(xupdate);
+
+                break;    
 
             case "/myorders":
 
@@ -185,6 +199,11 @@ public class ModeratorCommands {
                 }
 
                 break;
+                
+              case "/delete_msg":
+                Response.deleteMessage(xupdate);
+
+                break;    
 
         }
     }
@@ -259,6 +278,8 @@ public class ModeratorCommands {
         menu.addButton("💻 Cuentas", "/accounts", true);
         menu.addButton("💻 Grupos y areas", "/areas", true);
         menu.addButton("💻 Configuracion", "/config", true);
+        menu.addButton("💻 Balances", "/wallets", true);
+         menu.addButton("💻 CMD", "/cmd", true);
         menu.addButton("💳 Mi cartera", "/accounts", true);
         menu.addButton("♻ Actualizar", "/menu", true);
 

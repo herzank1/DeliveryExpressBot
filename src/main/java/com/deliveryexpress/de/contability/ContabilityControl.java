@@ -4,8 +4,10 @@
  */
 package com.deliveryexpress.de.contability;
 
+import com.deliveryexpress.objects.users.Bussines;
 import com.monge.xsqlite.xsqlite.BaseDao;
 import java.util.ArrayList;
+import lombok.Data;
 
 /**
  *
@@ -26,7 +28,8 @@ public class ContabilityControl {
         return b;
     }
 
-    /***
+    /**
+     * *
      * Carga la cuota a todos los contratos
      */
     public static void runCuotasCharges() {
@@ -37,8 +40,9 @@ public class ContabilityControl {
         }
 
     }
-    
-      /***
+
+    /**
+     * *
      * Carga el cobro mensual a todos los contratos
      */
     public static void runMonthlyCharges() {
@@ -49,23 +53,31 @@ public class ContabilityControl {
         }
 
     }
-    
-        public static String paymentMessage(float amount,String reference){
-    
+
+    public static String paymentMessage(float amount, String reference) {
+
         String cardNumber1 = "Banco BBVA\n"
                 + "No. Targeta: 4152313813297715\n"
                 + "Beneficiario: Diego Vicente Villarreal Monge\n"
-                + "Referencia:"+reference+"\n\n";
-        
+                + "Referencia:" + reference + "\n\n";
+
         String cardNumber2 = "Spin by OXXO\n"
                 + "CLABE: 728969000052109631\n"
                 + "Beneficiario: Diego Vicente Villarreal Monge\n"
-                + "Referencia:"+reference+"\n\n";
-        
-        return "Favor de pagar "+amount+" pesos en..\n\n"+cardNumber1+cardNumber1
-                +"";
-   
-    
+                + "Referencia:" + reference + "\n\n";
+
+        return "Favor de pagar " + amount + " pesos en..\n\n" + cardNumber1 + cardNumber1
+                + "";
+
     }
+
+    /*generar lista de cobro de negocios*/
+    public void generateDebCollectionLista() {
+        ArrayList<Bussines> readAll = Bussines.readAll(Bussines.class);
+        
+
+    }
+    
+   
 
 }

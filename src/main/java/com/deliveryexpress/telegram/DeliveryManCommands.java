@@ -59,7 +59,7 @@ public class DeliveryManCommands {
 
             case "/menu":
             case "/start":
-                BalanceAccount read = DataBase.Contability.BalancesAccounts.BalancesAccounts().read(deliveryMan.getBalanceAccountNumber());
+                BalanceAccount read = deliveryMan.getBalanceAccount();
                 Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(),
                         "Repartidor " + deliveryMan.getName()
                         + "\nID:" + user.getId()
@@ -74,7 +74,7 @@ public class DeliveryManCommands {
                             + " para conectarse!", MessageMenu.okAndDeleteMessage());
 
                 } else {
-                    deliveryMan.setConnected(!deliveryMan.isConnected());
+                    deliveryMan.switchConnection();
                     read = DataBase.Contability.BalancesAccounts.BalancesAccounts().read(deliveryMan.getBalanceAccountNumber());
                     Response.editMessage(xupdate.getTelegramUser(), xupdate.getMessageId(),
                             "Repartidor " + deliveryMan.getName()
